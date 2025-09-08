@@ -32,7 +32,7 @@ Sua contribuição é muito bem-vinda! Para colaborar, siga estes passos:
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone https://github.com/JeanCampos1604/Projetos_Unip
     ```
 2.  **Crie uma nova branch:** Antes de fazer suas alterações, crie uma branch para sua feature ou correção.
     ```bash
