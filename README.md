@@ -16,15 +16,26 @@ Para manter tudo organizado, o repositório está dividido em pastas, cada uma r
 .
 ├── Algoritmos e Estruturas de Dados em Python/
 │   └── Projetos/
+│   └── Documentos/
 ├── Programação Estrutura em C/
 │   └── Projetos/
+│   └── Documentos/
+├── Análise e Projeto de Sistema/
+│   └── Projetos/
+│   └── Documentos/
+├── Engenharia de Software Ágil/ 
+│   └── Projetos/
+│   └── Documentos/
 ├── PIMbada/
+├── Novos Projetos/
 └── README.md
 ```
 
-- **`Algoritmos e Estruturas de Dados em Python`**: Contém exemplos e exercícios sobre estruturas de dados como listas, deques, named tuples, etc.
-- **`Programação Estrutura em C`**: Projetos e exemplos desenvolvidos na linguagem C.
-- **`PIMbada`**: Projeto Integrado Multidisciplinar (PIM) desenvolvido em Python com a biblioteca Tkinter.
+- **`Algoritmos e Estruturas de Dados em Python`**: Contém slides e exercícios sobre estruturas de dados feito em Python.
+- **`Programação Estrutura em C`**: Slides e exercícios desenvolvidos na linguagem C.
+- **`Análise e Projeto de Sistema`**: Slides e exercícios sobre as aulas de Análise e Projeto de Sistema.
+- **`Engenharia de Software Ágil`**: Slides e exercícios sobre as aulas de Engenharia de Software Ágil.
+- **`PIMbada`**: Projeto Integrado Multidisciplinar (PIM) desenvolvido em Python com a biblioteca Tkinter e será utilizado C compilado pro backend.
 
 ## 🤝 Como Contribuir
 
