@@ -6,9 +6,9 @@ int main()
   setlocale(LC_ALL, "Portuguese");
   int i = 5;
   printf("Valor de i: %d\n", i);
-  printf("PÃ³s-incremento: %d\n", i++);
-  printf("Valor de i apÃ³s pÃ³s-incremento: %d\n", i);
-  printf("PrÃ©-decremento: %d\n", --i);
+  printf("Pós-incremento: %d\n", i++);
+  printf("Valor de i após pós-incremento: %d\n", i);
+  printf("Pré-decremento: %d\n", --i);
 
   return 0;
 }
