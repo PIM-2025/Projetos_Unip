@@ -1,8 +1,8 @@
-# UniPIM# 📘 Plataforma de Registro Acadêmico Digital (PRAD)
+# UniPIM# 📘 Plataforma de Registro Acadêmico Digital
 
 ## 🎯 Objetivo do Projeto
 
-A **Plataforma de Registro Acadêmico Digital (PRAD)** tem como objetivo facilitar o registro e a organização das informações escolares, substituindo o **diário de classe tradicional em papel** por uma versão eletrônica.  
+A **Plataforma de Registro Acadêmico Digital** tem como objetivo facilitar o registro e a organização das informações escolares, substituindo o **diário de classe tradicional em papel** por uma versão eletrônica.  
 Com ela, será possível registrar **aulas, presenças, notas e atividades** de forma rápida e prática, oferecendo mais agilidade para professores e mais transparência para alunos e gestores.
 
 O sistema busca tornar o processo de acompanhamento acadêmico mais **simples, moderno e acessível**, contribuindo para a **redução da burocracia** e para uma **melhor comunicação dentro do ambiente escolar**.
