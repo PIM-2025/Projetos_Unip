@@ -5,7 +5,10 @@ HOST = '127.0.0.1'
 PORT = 5050
 
 # Mensagem a ser enviada para o servidor C
-mensagem = {"acao": "registrar_aula", "turma": "Turma A", "professor": "Prof. João", "conteudo": "Matemática"}
+mensagem = {"acao": "registrar_aula", 
+            "turma": "Turma A", 
+            "professor": "Prof. Jean", 
+            "conteudo": "Matemática"}
 
 # Conecta, envia a mensagem e aguarda uma resposta
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

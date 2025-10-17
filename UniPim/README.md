@@ -121,3 +121,8 @@ A IA será aplicada em funções simples e úteis dentro do ambiente escolar, co
 ---
 
 > 💬 **Dica:** utilize GitHub ou Google Drive para centralizar os arquivos e permitir que todos os integrantes trabalhem de forma colaborativa e organizada.
+
+
+
+Rodar: gcc servidor.c cJSON.c sqlite3.c -o output/servidor.exe -lws2_32
+gcc src/servidor.c src/cJSON.c src/sqlite3.c -Iinclude -o build/servidor.exe -lws2_32

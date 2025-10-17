@@ -1,19 +1,35 @@
-# Makefile
-CC=gcc
-CFLAGS=-Wall
-LIBS=-lsqlite3 -ljson-c
-OBJ=banco.o servidor.o
+# Nome do compilador
+CC = gcc
 
-all: servidor
+# Flags de compilação
+# -Iinclude: Procura headers na pasta include
+# -Wall -Wextra: Ativa avisos extras de compilação (boa prática)
+# -g: Adiciona informações de debug
+CFLAGS = -Iinclude -Wall -Wextra -g
 
-servidor: $(OBJ)
-	$(CC) $(OBJ) -o servidor $(LIBS)
+# Bibliotecas a serem linkadas
+LDFLAGS = -lws2_32
 
-banco.o: banco.c banco.h
-	$(CC) $(CFLAGS) -c banco.c
+# Pastas
+SRCDIR = src
+BUILDDIR = build
 
-servidor.o: servidor.c banco.h
-	$(CC) $(CFLAGS) -c servidor.c
+# Arquivos-fonte
+SRCS = $(SRCDIR)/servidor.c $(SRCDIR)/banco.c $(SRCDIR)/cJSON.c $(SRCDIR)/sqlite3.c
 
+# Nome do executável
+TARGET = $(BUILDDIR)/servidor.exe
+
+# Regra principal: o que fazer quando você digita 'make'
+all: $(TARGET)
+
+# Regra para criar o executável
+$(TARGET): $(SRCS)
+	@mkdir -p $(BUILDDIR) # Cria a pasta build se não existir
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
+# Regra para limpar os arquivos compilados
 clean:
-	rm -f *.o servidor banco.db
+	rm -f $(BUILDDIR)/*
+
+.PHONY: all clean
