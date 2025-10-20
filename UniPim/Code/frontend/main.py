@@ -1,13 +1,18 @@
 import customtkinter
 from tkinter import ttk
 import os
+import sys
+
+# Adiciona o diretório 'Code' ao sys.path para resolver os imports relativos
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from PIL import Image
-from vsPadrao import PaginaInicio
-from vsAlunos import PaginaAlunos
-from vsProfessores import PaginaProfessores
-from vsConfigs import PaginaConfiguracoes
-from vsMaterias import PaginaMaterias
-from vsCursos import PaginaCursos
+from View.vsPadrao import PaginaInicio
+from View.vsAlunos import PaginaAlunos
+from View.vsProfessores import PaginaProfessores
+from View.vsConfigs import PaginaConfiguracoes
+from View.vsMaterias import PaginaMaterias
+from View.vsCursos import PaginaCursos
 
 class UniPimApp(customtkinter.CTk):
     
@@ -69,6 +74,11 @@ class UniPimApp(customtkinter.CTk):
         self.ribbon_content_area.pack_propagate(False)
 
         self.ribbon_frames = {}
+        icones_abas = {
+            "Cadastros": "Assets/Cadastros.png",
+            "Consultas": "Assets/Consultas.png",
+            "Relatórios": "Assets/Relatorios.png"
+        }
 
         #  Abas da Esquerda 
         abas_esquerda = ["Cadastros", "Consultas", "Relatórios"]
@@ -76,16 +86,15 @@ class UniPimApp(customtkinter.CTk):
             frame = customtkinter.CTkFrame(self.ribbon_content_area)
             self.ribbon_frames[aba_nome] = frame
             frame.place(relwidth=1, relheight=1)
-            # Usando a nova função para criar os botões das abas
-            self.criar_botao_aba(self.tab_bar, aba_nome, None, lambda f=frame, name=aba_nome: self.ativar_aba(f, name))
+            self.criar_botao_aba(self.tab_bar, aba_nome, icones_abas.get(aba_nome), lambda f=frame, name=aba_nome: self.ativar_aba(f, name))
 
         # --- Widgets da Direita ---
         # Os widgets são criados na ordem inversa em que aparecerão (de direita para esquerda)
 
         # Botão Sair
-        self.criar_botao_utilitario(self.tab_bar, "Sair", "img/Sair.png", self.quit, width=80, fg_color="#D2042D", hover_color="#A50021")
+        self.criar_botao_utilitario(self.tab_bar, "Sair", "Assets/Sair.png", self.quit, width=80, fg_color="#D2042D", hover_color="#A50021")
         # Botão Configurações
-        self.criar_botao_utilitario(self.tab_bar, "Configurações", "img/Config.png", lambda: self.mostrar_pagina(PaginaConfiguracoes), width=140)
+        self.criar_botao_utilitario(self.tab_bar, "Configurações", "Assets/Config.png", lambda: self.mostrar_pagina(PaginaConfiguracoes), width=140)
 
         self.adicionar_botoes_ribbon()
         self.tab_buttons = {w.cget("text"): w for w in self.tab_bar.winfo_children() 
@@ -112,24 +121,35 @@ class UniPimApp(customtkinter.CTk):
 
     # Função para adicionar botões às abas do ribbon
     def adicionar_botoes_ribbon(self):
-        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Alunos", "img/Aluno.png", lambda: self.mostrar_pagina(PaginaAlunos))
-        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Professores", "img/Professor.png", lambda: self.mostrar_pagina(PaginaProfessores))
-        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Cursos", "img/Curso.png", lambda: self.mostrar_pagina(PaginaCursos))
-        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Matérias", "img/Materias.png", lambda: self.mostrar_pagina(PaginaMaterias))
+        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Alunos", "Assets/Aluno.png", lambda: self.mostrar_pagina(PaginaAlunos))
+        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Professores", "Assets/Professor.png", lambda: self.mostrar_pagina(PaginaProfessores))
+        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Cursos", "Assets/Curso.png", lambda: self.mostrar_pagina(PaginaCursos))
+        self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Matérias", "Assets/Materias.png", lambda: self.mostrar_pagina(PaginaMaterias))
 
     # Função para criar um botão de aba na barra superior (esquerda)
     def criar_botao_aba(self, parent, texto, caminho_icone, comando):
-        # Lógica para carregar ícone (similar às outras funções)
-        # Por enquanto, sem ícone, mas a estrutura está pronta.
-        ctk_image = None 
+        ctk_image = None
+        try:
+            if caminho_icone:
+                script_dir = os.path.dirname(os.path.abspath(__file__))
+                caminho_completo = os.path.join(script_dir, caminho_icone)
+                ctk_image = customtkinter.CTkImage(
+                    light_image=Image.open(caminho_completo),
+                    dark_image=Image.open(caminho_completo),
+                    size=(20, 20)
+                )
+        except FileNotFoundError:
+            print(f"Aviso: Ícone da aba não encontrado em '{caminho_icone}'.")
 
         botao = customtkinter.CTkButton(parent, 
                                         text=texto, 
                                         command=comando,
                                         image=ctk_image,
+                                        compound="left",
+                                        font=customtkinter.CTkFont(size=13),
                                         fg_color="transparent",
                                         border_width=0,
-                                        text_color=("gray10", "gray90")) # Garante a cor correta da fonte em ambos os temas
+                                        text_color=("gray10", "gray90"))
         botao.pack(side="left", padx=2)
         return botao
 
@@ -200,19 +220,19 @@ class UniPimApp(customtkinter.CTk):
     # Função para atualizar o estilo do Treeview em todas as páginas de acordo com o tema atual
     def atualizar_estilo_treeview(self):
         if self.tema_atual.lower() == "dark":
-            bg_color = "#2a2d2e"
+            bg_color = "#2B2B2B" # Cinza neutro, padrão do CustomTkinter
             text_color = "white"
-            field_bg_color = "#343638"
-            header_bg = "#565b5e"
+            field_bg_color = "#333333" # Cinza escuro mais neutro
+            header_bg = "#444444" # Cinza médio mais neutro
             selected_color = "#22559b"
-            header_border_color = "#343638"
+            header_border_color = "#444444" # Cor da borda igual ao fundo para um visual uniforme
         else: # Tema claro
             bg_color = "#ebebeb"
             text_color = "black"
             field_bg_color = "#f2f2f2"
             header_bg = "#d6d6d6"
             selected_color = "#3a7ebf"
-            header_border_color = "#c2c2c2"
+            header_border_color = "#d6d6d6" # Cor da borda igual ao fundo para um visual uniforme
 
         style = ttk.Style()
         style.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=field_bg_color, borderwidth=0)
