@@ -4,22 +4,22 @@ from tkinter import ttk
 from PIL import Image
 import os
 
-class PaginaAlunos(customtkinter.CTkFrame):
+class PaginaMaterias(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
 
         def adicionar_item():
-            print("Botão Adicionar Clicado")
+            print("Botão Adicionar Matéria Clicado")
 
         def editar_item():
-            print("Botão Editar Clicado")
+            print("Botão Editar Matéria Clicado")
 
         def excluir_item():
-            print("Botão Excluir Clicado")
+            print("Botão Excluir Matéria Clicado")
 
         def atualizar_grid():
-            print("Botão Atualizar Clicado")
+            print("Botão Atualizar Grid de Matérias Clicado")
 
         def carregar_imagem(caminho):
             script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,28 +48,21 @@ class PaginaAlunos(customtkinter.CTkFrame):
         self.botao_atualizar = customtkinter.CTkButton(self.frame_botoes, text="", image=self.refresh_icon, width=32, fg_color="transparent", command=atualizar_grid)
         self.botao_atualizar.pack(side='left', padx=5)
 
-
-        # Dados para a tabela
-        colunas = ('ra', 'nome', 'curso', 'cpf', 'data_nascimento', 'email', 'telefone')
+        colunas = ('id', 'nome', 'curso', 'carga_horaria')
         self.tree = ttk.Treeview(self, columns=colunas, show='headings')
         
-        self.tree.heading('ra', text='RA', anchor='w')
-        self.tree.heading('nome', text='Nome', anchor='w')
-        self.tree.heading('curso', text='Curso', anchor='w')
-        self.tree.heading('cpf', text='CPF', anchor='w')
-        self.tree.heading('data_nascimento', text='Data de Nascimento', anchor='w')
-        self.tree.heading('email', text='E-mail', anchor='w')
-        self.tree.heading('telefone', text='Telefone', anchor='w')
+        self.tree.heading('id', text='ID', anchor='w')
+        self.tree.heading('nome', text='Nome da Matéria', anchor='w')
+        self.tree.heading('curso', text='Curso Associado', anchor='w')
+        self.tree.heading('carga_horaria', text='Carga Horária', anchor='w')
 
-        # Dados de exemplo
-        alunos_exemplo = [
-            ('H7703G3', 'Gabriel Liesenberg Massari', 'Análise e Des. de Sistemas', '895.676.480-85', '02/09/2004', 'gabriel@gmail.com', '(19)91234-5678'),
-            ('R8975J5', 'João Pedro Caetano', 'Análise e Des. de Sistemas', '456.456.789-00', '20/08/2003', 'joao@gmail.com', '(19)98765-4321'),
-            ('H775590', 'Gustavo Henrique dos S Moreira', 'Análise e Des. de Sistemas', '789.654.321-00', '10/10/2003', 'gugu@hotmail.com', '(19)91234-5678'),
-            ('R951952', 'Jean Flávio de Campos', 'Análise e Des. de Sistemas', '789.456.789-00', '15/05/2003', 'jeanzao@gmail.com', '(19)98774-4321'),
-            ('H7823F3', 'Ramon Guimaraes de Oliveira', 'Análise e Des. de Sistemas', '123.456.123-00', '15/05/2003', 'ramon@gmail.com', '(19)94565-4321')
+        # Adicionando dados de exemplo
+        materias_exemplo = [
+            (1, 'Banco de Dados', 'Análise e Des. de Sistemas', '80h'),
+            (2, 'Engenharia de Software I', 'Análise e Des. de Sistemas', '80h'),
+            (3, 'Linguagem de Programação', 'Ciência da Computação', '120h')
         ]
-        for aluno in alunos_exemplo:
-            self.tree.insert('', tk.END, values=aluno)
+        for materia in materias_exemplo:
+            self.tree.insert('', tk.END, values=materia)
 
         self.tree.pack(expand=True, fill='both', padx=10, pady=10)

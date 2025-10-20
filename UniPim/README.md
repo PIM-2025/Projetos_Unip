@@ -126,3 +126,8 @@ A IA será aplicada em funções simples e úteis dentro do ambiente escolar, co
 
 Rodar: gcc servidor.c cJSON.c sqlite3.c -o output/servidor.exe -lws2_32
 gcc src/servidor.c src/cJSON.c src/sqlite3.c -Iinclude -o build/servidor.exe -lws2_32
+
+
+Instalações Front:
+pip install customtkinter
+pip install Pillow
