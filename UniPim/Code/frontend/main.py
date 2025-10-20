@@ -7,6 +7,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from PIL import Image
+from View.vsLogin import PaginaLogin
 from View.vsPadrao import PaginaInicio
 from View.vsAlunos import PaginaAlunos
 from View.vsProfessores import PaginaProfessores
@@ -242,5 +243,11 @@ class UniPimApp(customtkinter.CTk):
 
 
 if __name__ == "__main__":
-    app = UniPimApp()
-    app.mainloop()
+    # Função para iniciar a aplicação principal
+    def start_main_app():
+        app = UniPimApp()
+        app.mainloop()
+
+    # Inicia a janela de login primeiro
+    login_app = PaginaLogin(on_login_success=start_main_app)
+    login_app.mainloop()

@@ -1,133 +1,209 @@
-# UniPIM# 📘 Plataforma de Registro Acadêmico Digital
+# UniPim - Plataforma de Registro Acadêmico Digital
 
-## 🎯 Objetivo do Projeto
+## 🎯 Sobre o Projeto
 
-A **Plataforma de Registro Acadêmico Digital** tem como objetivo facilitar o registro e a organização das informações escolares, substituindo o **diário de classe tradicional em papel** por uma versão eletrônica.  
-Com ela, será possível registrar **aulas, presenças, notas e atividades** de forma rápida e prática, oferecendo mais agilidade para professores e mais transparência para alunos e gestores.
+A **Plataforma de Registro Acadêmico Digital (UniPim)** é um sistema de desktop desenvolvido para modernizar e simplificar a gestão de informações acadêmicas. O projeto substitui o tradicional diário de classe em papel por uma solução eletrônica, permitindo que professores e administradores registrem aulas, notas, presenças e outras atividades de forma mais eficiente.
 
-O sistema busca tornar o processo de acompanhamento acadêmico mais **simples, moderno e acessível**, contribuindo para a **redução da burocracia** e para uma **melhor comunicação dentro do ambiente escolar**.
+O sistema é construído com uma arquitetura cliente-servidor, utilizando um backend em **C** para gerenciar a lógica de negócios e um frontend em **Python** com a biblioteca **customtkinter** para a interface do usuário.
 
----
+## ✨ Funcionalidades
 
-## 🧩 Estrutura do Projeto
+- **Interface Gráfica Moderna:** Interface intuitiva e amigável com temas claro e escuro.
+- **Cadastro de Entidades:**
+    - Alunos
+    - Professores
+    - Cursos
+    - Matérias
+- **Registro de Aulas:** Permite que os professores registrem o conteúdo de cada aula.
+- **Comunicação em Rede:** O frontend se comunica com o backend através de sockets TCP para enviar e receber dados em formato JSON.
+- **Banco de Dados:** Utiliza **SQLite** para armazenar todas as informações de forma persistente.
 
-**Tema do PIM:** Desenvolvimento de um Sistema Acadêmico Colaborativo com Apoio de Inteligência Artificial (IA)  
-**Nome do Sistema:** Plataforma de Registro Acadêmico Digital (PRAD)  
-**Linguagens:** Python (Tkinter) e C (Backend)
+## 📂 Estrutura de Pastas
 
----
+O projeto está organizado da seguinte forma:
 
-## 👥 Divisão de Equipe e Responsabilidades
+```
+UniPim/
+├── Code/
+│   ├── Backend/
+│   │   ├── build/                # Contém o executável do servidor
+│   │   ├── data/                 # Contém o arquivo do banco de dados
+│   │   ├── include/              # Arquivos de cabeçalho C
+│   │   └── src/                  # Código-fonte do backend em C
+│   └── Frontend/
+│       ├── Assets/               # Ícones e imagens da interface
+│       ├── Cadastro/             # Módulos de cadastro
+│       ├── View/                 # Módulos das telas da aplicação
+│       └── main.py               # Ponto de entrada da aplicação frontend
+├── Documents/                    # Documentação do projeto
+└── README.md                     # Este arquivo
+```
 
-| Integrante                                       | Função Principal                            | Responsabilidades                                                                                                                                                                                                                                                                     | Entregas                                                                                              |
-| ------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| **1️⃣ Líder do Projeto / Analista de Requisitos** | Organização e documentação                  | - Criar o **documento principal (ABNT)**: introdução, justificativa, objetivos e metodologia.<br> - Reunir requisitos do sistema com o grupo.<br> - Coordenar prazos e integração entre membros.                                                                                      | Documento ABNT (introdução, objetivos, justificativa, metodologia).<br> Cronograma e atas de reunião. |
-| **2️⃣ Desenvolvedor Backend (C)**                 | Lógica de negócio e banco de dados          | - Criar módulos em **C** para:<br> &nbsp;&nbsp;• Registro de aulas e presenças.<br> &nbsp;&nbsp;• Controle de notas e médias.<br> &nbsp;&nbsp;• Acesso e autenticação de usuários.<br> - Fazer comunicação com Python (via **socket**, **arquivo CSV/JSON** ou **API local**).        | Código C documentado.<br> Diagramas UML (classes e sequência).                                        |
-| **3️⃣ Desenvolvedor Frontend (Python + Tkinter)** | Interface gráfica e interação com o usuário | - Criar telas em Tkinter para:<br> &nbsp;&nbsp;• Login e cadastro.<br> &nbsp;&nbsp;• Registro de aulas e notas.<br> &nbsp;&nbsp;• Mural de atividades.<br> &nbsp;&nbsp;• Relatórios e avisos.<br> - Integrar interface com backend C.                                                 | Código Python documentado.<br> Telas funcionais.<br> Manual de uso (prints e explicações).            |
-| **4️⃣ Engenheiro de Testes e Redes**              | Testes, rede local e validação              | - Configurar **rede local (LAN)** simulada com 2 máquinas (cliente e servidor).<br> - Realizar **testes de homologação** (funcionalidade, desempenho e rede).<br> - Criar o **plano de testes** e **diagrama de rede** (IPs estáticos, DHCP etc.).                                    | Plano de testes.<br> Diagrama de rede.<br> Relatório de homologação.                                  |
-| **5️⃣ Especialista em IA e Documentação Final**   | IA e conclusão do relatório                 | - Criar uma **IA simples** em Python:<br> &nbsp;&nbsp;• Sugestão de atividades com base em aulas registradas.<br> &nbsp;&nbsp;• Chat interno para dúvidas frequentes.<br> - Escrever **conclusão, resultados esperados e referências ABNT**.<br> - Criar **apresentação PowerPoint**. | Módulo de IA (Python).<br> Conclusão ABNT.<br> Slides de apresentação.                                |
+## 🔧 Pré-requisitos
 
----
+Antes de começar, certifique-se de ter os seguintes softwares instalados em sua máquina:
 
-## ⚙️ Arquitetura Técnica
+### Backend
 
-┌───────────────────────────────┐
-│ Interface Tkinter (Python) │
-│ - Login, mural, registro │
-│ - Consulta de dados │
-│ - IA de sugestões/respostas │
-└──────────────┬────────────────┘
-│
-Comunicação via socket/arquivo
-│
-┌───────────────────────────────┐
-│ Módulos em C (Backend) │
-│ - CRUD de alunos, turmas │
-│ - Registro de notas/presenças│
-│ - Armazenamento (CSV/binário)│
-└───────────────────────────────┘
-│
-┌───────────────────────────────┐
-│ Banco de Dados Local / Arquivo│
-│ - Dados persistentes │
-└───────────────────────────────┘
+- **Compilador C (GCC):** Necessário para compilar o código-fonte do servidor. Você pode instalá-lo através do [MinGW](http://www.mingw.org/) no Windows.
 
----
+### Frontend
 
-## 🧠 Inteligência Artificial no Projeto
+- **Python 3:** A aplicação foi desenvolvida em Python. Você pode baixá-lo em [python.org](https://www.python.org/downloads/).
+- **Bibliotecas Python:** Instale as dependências do frontend usando o pip:
+  ```bash
+  pip install customtkinter Pillow
+  ```
 
-A IA será aplicada em funções simples e úteis dentro do ambiente escolar, como:
+## ⚙️ Instalação e Execução
 
-- **Chat de Dúvidas Frequentes:** o sistema responde perguntas básicas dos usuários.
-- **Sugestão de Atividades:** a IA recomenda tarefas com base no histórico de aulas.
-- **Resumo Automático:** gera pequenos resumos dos avisos do mural.
+Siga os passos abaixo para configurar e executar o projeto.
 
----
+### 1. Backend
 
-## 🧾 Estrutura do Relatório (Padrão ABNT)
+O backend é responsável por toda a lógica de negócios e comunicação com o banco de dados.
 
-1. **Capa e Folha de Rosto**
-2. **Resumo e Palavras-Chave**
-3. **Introdução** – Contextualização e objetivos do projeto
-4. **Justificativa** – Importância da digitalização dos registros acadêmicos
-5. **Objetivos Gerais e Específicos**
-6. **Metodologia** – Linguagens, ferramentas, divisão de equipe
-7. **Desenvolvimento**
-   - Estrutura do sistema
-   - Diagramas UML e de rede
-   - Prints das telas
-8. **Resultados Esperados e Testes**
-9. **Conclusão e Trabalhos Futuros**
-10. **Referências Bibliográficas**
+**Compilando o Servidor:**
 
----
+1.  Abra um terminal na pasta `Code/Backend`.
+2.  Execute o seguinte comando para compilar o servidor. O `Makefile` na pasta `src` também pode ser usado com o comando `make`.
 
-## 📊 Estrutura da Apresentação (PowerPoint)
+    ```bash
+    gcc -I include src/servidor.c src/banco.c src/cJSON.c src/sqlite3.c -o build/servidor.exe -lws2_32
+    ```
 
-1. **Título, Curso e Integrantes**
-2. **Problema Identificado**
-3. **Solução Proposta (PRAD)**
-4. **Tecnologias Utilizadas (Python, Tkinter, C, IA)**
-5. **Diagramas UML e de Rede**
-6. **Prints das Telas e Demonstração**
-7. **Resultados e Benefícios**
-8. **Conclusão e Próximos Passos**
+    Este comando compila os arquivos-fonte em C e cria o executável `servidor.exe` na pasta `build`.
 
----
+**Iniciando o Servidor:**
 
-## 📅 Sugestão de Cronograma (Resumo)
+1.  Após a compilação, navegue até a pasta `build`:
 
-| Semana | Atividade                                        | Responsável          |
-| ------ | ------------------------------------------------ | -------------------- |
-| 1–2    | Levantamento de requisitos e definição do escopo | Líder                |
-| 3–4    | Criação do backend em C                          | Dev Backend          |
-| 5–6    | Desenvolvimento da interface Tkinter             | Dev Frontend         |
-| 7–8    | Implementação da IA e integração                 | Especialista IA      |
-| 9      | Testes e validação em rede local                 | Engenheiro de Testes |
-| 10     | Finalização da documentação ABNT e PowerPoint    | Todos                |
+    ```bash
+    cd build
+    ```
 
----
+2.  Execute o servidor:
 
-## 📦 Entregáveis Finais
+    ```bash
+    servidor.exe
+    ```
 
-- Documento ABNT completo (PDF)
-- Código-fonte (Python + C) comentado
-- Diagramas UML e de rede
-- Plano de testes e homologação
-- Manual do usuário
-- Apresentação PowerPoint
-- Demonstração prática (2 usuários conectados em rede local)
+    O servidor estará em execução e aguardando conexões na porta `5050`.
 
----
+### 2. Frontend
 
-> 💬 **Dica:** utilize GitHub ou Google Drive para centralizar os arquivos e permitir que todos os integrantes trabalhem de forma colaborativa e organizada.
+O frontend é a interface gráfica com a qual o usuário interage.
 
+**Executando a Aplicação:**
 
+1.  Abra um novo terminal e navegue até a pasta `Code/Frontend`:
 
-Rodar: gcc servidor.c cJSON.c sqlite3.c -o output/servidor.exe -lws2_32
-gcc src/servidor.c src/cJSON.c src/sqlite3.c -Iinclude -o build/servidor.exe -lws2_32
+    ```bash
+    cd Code/Frontend
+    ```
 
+2.  Execute o arquivo `main.py` para iniciar a aplicação:
 
-Instalações Front:
-pip install customtkinter
-pip install Pillow
+    ```bash
+    python main.py
+    ```
+
+    A janela de login será exibida. Após o login, a aplicação principal será carregada.
+
+## 🗃️ Banco de Dados
+
+O sistema utiliza o **SQLite** como banco de dados. O arquivo do banco de dados, `unipim.db`, é criado automaticamente na pasta `Code/Backend/data` quando o servidor é iniciado pela primeira vez.
+
+A tabela principal é a `aulas`, com a seguinte estrutura:
+
+| Coluna      | Tipo     | Descrição                               |
+|-------------|----------|-------------------------------------------|
+| `id`        | INTEGER  | Identificador único da aula (autoincremento) |
+| `turma`     | TEXT     | Nome da turma                             |
+| `professor` | TEXT     | Nome do professor                         |
+| `conteudo`  | TEXT     | Conteúdo da aula ministrada               |
+| `timestamp` | DATETIME | Data e hora do registro da aula           |
+
+## 📡 API (Comunicação Backend)
+
+A comunicação entre o frontend e o backend é feita via sockets TCP, com mensagens no formato JSON. O servidor escuta na porta `5050` e espera por requisições JSON com a seguinte estrutura:
+
+```json
+{
+  "acao": "nome_da_acao",
+  "dados": {
+    "chave": "valor"
+  }
+}
+```
+
+### Ações Disponíveis
+
+#### `registrar_aula`
+
+Registra uma nova aula no banco de dados.
+
+**Requisição:**
+
+```json
+{
+  "acao": "registrar_aula",
+  "turma": "Nome da Turma",
+  "professor": "Nome do Professor",
+  "conteudo": "Conteúdo da aula"
+}
+```
+
+**Resposta (Sucesso):**
+
+```json
+{
+  "status": "sucesso",
+  "mensagem": "Aula registrada com sucesso!"
+}
+```
+
+**Resposta (Erro):**
+
+```json
+{
+  "status": "erro",
+  "mensagem": "Mensagem de erro detalhada."
+}
+```
+
+#### `listar_aulas`
+
+Retorna uma lista de todas as aulas registradas.
+
+**Requisição:**
+
+```json
+{
+  "acao": "listar_aulas"
+}
+```
+
+**Resposta (Sucesso):**
+
+```json
+{
+  "status": "sucesso",
+  "aulas": [
+    {
+      "id": 1,
+      "turma": "Engenharia de Software",
+      "professor": "Dr. Alan Turing",
+      "conteudo": "Introdução a algoritmos.",
+      "timestamp": "2025-10-20 10:00:00"
+    },
+    {
+      "id": 2,
+      "turma": "Ciência de Dados",
+      "professor": "Dr. Ada Lovelace",
+      "conteudo": "Análise exploratória de dados.",
+      "timestamp": "2025-10-20 11:00:00"
+    }
+  ]
+}
+```

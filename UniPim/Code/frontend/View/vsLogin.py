@@ -1,46 +1,76 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
+import os
 
-ctk.set_appearance_mode('dark')
+class PaginaLogin(ctk.CTk):
+    def __init__(self, on_login_success):
+        super().__init__()
+        self.on_login_success = on_login_success
 
-def validar_login():
-    usuario = campo_usuario.get()
-    senha = campo_senha.get()
-    if usuario == 'admin' and senha == 'admin123':
-        resultado_login.configure(text='Login bem-sucedido!', text_color='green')
-    else:
-        resultado_login.configure(text='Usuário ou senha incorretos.', text_color='red')
+        self.title("Login - UniPim")
+        self.geometry("360x480") # Tamanho ajustado
+        self.resizable(False, False)
 
-app = ctk.CTk()
-app.title('Plataforma de Registro Acadêmico Digital')
-app.geometry('800x600')
+        # Aparência
+        ctk.set_appearance_mode("dark")
 
-imagem_logo = Image.open('Assets/logo.png')  # Substitua pelo nome correto do arquivo se necessário
-imagem_logo = imagem_logo.resize((100, 100))  # Ajuste o tamanho conforme necessário
-imagem_logo_ctk = ctk.CTkImage(dark_image=imagem_logo, light_image=imagem_logo, size=(144, 44))
+        # Centraliza a janela na tela
+        self.after(100, self._center_window)
 
-# Adicionar a imagem no topo
-label_logo = ctk.CTkLabel(app, image=imagem_logo_ctk, text='')  # text='' para não exibir texto junto
-label_logo.pack(pady=(20, 10))  # Espaçamento superior
+        # Carregar e exibir o logo
+        self._carregar_e_exibir_logo()
 
-lbl_bemvindo = ctk.CTkLabel(app, text='Bem-vindo à Plataforma de Registro Acadêmico Digital', font=('Arial', 25, 'bold'))
-lbl_bemvindo.pack(pady=10)
+        # Widgets de login
+        self.lbl_bemvindo = ctk.CTkLabel(self, text='Bem-vindo', font=ctk.CTkFont(size=25, weight="bold"))
+        self.lbl_bemvindo.pack(pady=(30, 15), padx=20)
 
-lbl_usuario = ctk.CTkLabel(app, text='Usuário:')
-lbl_usuario.pack(pady=5)
-campo_usuario = ctk.CTkEntry(app, placeholder_text='Digite seu usuário', font=('Arial', 14))
-campo_usuario.pack(pady=10)
+        self.campo_usuario = ctk.CTkEntry(self, width=240, placeholder_text='Usuário')
+        self.campo_usuario.pack(pady=12, padx=20)
 
+        self.campo_senha = ctk.CTkEntry(self, width=240, placeholder_text='Senha', show='*')
+        self.campo_senha.pack(pady=12, padx=20)
+        self.campo_senha.bind("<Return>", self.validar_login)
 
-lbl_senha = ctk.CTkLabel(app, text='Senha:', font=('Arial', 14))
-lbl_senha.pack(pady=5)
-campo_senha = ctk.CTkEntry(app, placeholder_text='Digite sua senha', show='*')
-campo_senha.pack(pady=10)
+        self.button_login = ctk.CTkButton(self, text='Login', command=self.validar_login, width=240)
+        self.button_login.pack(pady=20, padx=20)
 
-button_login = ctk.CTkButton(app, text='Login', command=validar_login)
-button_login.pack(pady=10)
+        self.resultado_login = ctk.CTkLabel(self, text='', text_color='red')
+        self.resultado_login.pack(pady=(0, 10), padx=20)
 
-resultado_login = ctk.CTkLabel(app, text='')
-resultado_login.pack(pady=10)
+    def _center_window(self):
+        self.update_idletasks()
+        width = self.winfo_width()
+        height = self.winfo_height()
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f'{width}x{height}+{x}+{y}')
 
-app.mainloop()
+    def _carregar_e_exibir_logo(self):
+        try:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(script_dir, '..', 'Assets', 'Logo.png')
+            imagem_logo = Image.open(image_path)
+            imagem_logo_ctk = ctk.CTkImage(dark_image=imagem_logo, light_image=imagem_logo, size=(144, 44))
+
+            label_logo = ctk.CTkLabel(self, image=imagem_logo_ctk, text='')
+            label_logo.pack(pady=(50, 10))
+        except FileNotFoundError:
+            print("Arquivo de logo não encontrado. Verifique o caminho Assets/Logo.png")
+            label_logo = ctk.CTkLabel(self, text='UniPim', font=ctk.CTkFont(size=30, weight="bold"))
+            label_logo.pack(pady=(50, 10))
+
+    def validar_login(self, event=None):
+        usuario = self.campo_usuario.get()
+        senha = self.campo_senha.get()
+        if usuario == 'admin' and senha == 'admin123':
+            self.resultado_login.configure(text='Login bem-sucedido!', text_color='green')
+            self.after(500, self._on_success)
+        else:
+            self.resultado_login.configure(text='Usuário ou senha incorretos.', text_color='red')
+
+    def _on_success(self):
+        self.destroy()
+        self.on_login_success()
+
+    def run(self):
+        self.mainloop()
