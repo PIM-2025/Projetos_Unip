@@ -4,7 +4,7 @@ from tkinter import ttk
 from PIL import Image
 from tkinter import messagebox
 import os
-from Frontend.Cadastro.cadAluno import JanelaCadastroAluno
+from frontend.Cadastro.cadAluno import JanelaCadastroAluno
 
 class PaginaAlunos(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
