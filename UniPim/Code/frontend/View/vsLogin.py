@@ -12,7 +12,7 @@ class PaginaLogin(ctk.CTk):
         self.resizable(False, False)
 
         # Aparência
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode("system")
 
         # Centraliza a janela na tela
         self.after(100, self._center_window)
@@ -62,15 +62,17 @@ class PaginaLogin(ctk.CTk):
     def validar_login(self, event=None):
         usuario = self.campo_usuario.get()
         senha = self.campo_senha.get()
+        self.resultado_login.configure(text='Login bem-sucedido!', text_color='green')
+        self.after(500, lambda: self._on_success(usuario))
+
         if usuario == 'admin' and senha == 'admin123':
             self.resultado_login.configure(text='Login bem-sucedido!', text_color='green')
-            self.after(500, self._on_success)
+            # Passa o nome de usuário para a função de sucesso
+            self.after(500, lambda: self._on_success(usuario))
         else:
             self.resultado_login.configure(text='Usuário ou senha incorretos.', text_color='red')
 
-    def _on_success(self):
+    def _on_success(self, username):
         self.destroy()
-        self.on_login_success()
-
-    def run(self):
-        self.mainloop()
+        # Chama o callback passando o nome de usuário
+        self.on_login_success(username)

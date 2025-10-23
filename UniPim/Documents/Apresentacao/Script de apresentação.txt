@@ -1,0 +1,51 @@
+Gustavo (Páginas 1,2,3)
+- Problemática:
+Hoje, em muitas instituições de ensino, ainda existem vários processos administrativos e acadêmicos sendo realizados de forma manual.
+Por exemplo, atividades como controle de documentos, registros de alunos ou comunicações entre setores são feitas por meio de planilhas, e-mails e até aplicativos como o WhatsApp.
+Isso faz com que as informações fiquem dispersas e descentralizadas, dificultando o acompanhamento, o acesso rápido aos dados e a integração entre os setores.
+Além disso, quando cada área trabalha com suas próprias planilhas ou registros, surgem erros, retrabalho e perda de tempo.
+O problema central, portanto, é a falta de digitalização e centralização dos processos, e é justamente isso que queremos resolver com a nossa proposta.
+
+Massari (Páginas 4,5,6)
+- Metodologia
+No nosso trabalho, utilizamos princípios do Scrum, uma metodologia ágil muito comum no desenvolvimento de software.
+O Scrum organiza o trabalho em ciclos curtos, chamados de Sprints, com foco em entregas rápidas e contínuas.
+Ele define três papéis principais: o Product Owner, que define as prioridades; o Scrum Master, que garante o bom andamento do processo; e o Time de Desenvolvimento, responsável por executar as tarefas.
+Essa abordagem nos ajuda a manter organização, colaboração e adaptação constante ao longo do projeto
+- Método
+Além disso, no nosso projeto também utilizamos o Kanban, por ser uma ferramenta visual e intuitiva de organização.
+Ele permite acompanhar as tarefas em um quadro dividido por etapas: A Fazer, Em Progresso e Concluído.
+Com o Kanban, conseguimos visualizar o progresso, gerenciar o fluxo de trabalho e manter um desenvolvimento contínuo.
+Essa metodologia foi essencial para manter o time alinhado e garantir eficiência e clareza durante o desenvolvimento.
+
+Jean (Páginas 7,8,9,10,11,12,13)
+
+Peu (14,15)
+- Resultados Esperados
+O principal objetivo do nosso projeto é resolver a problemática que identificamos, ou seja, a falta de digitalização e centralização dos processos administrativos e acadêmicos.
+Para isso, estamos criando um sistema digital único, que vai centralizar todos os cadastros e eliminar o uso de planilhas, WhatsApp e outros registros informais que dificultam a gestão das informações.
+Com essa solução, esperamos garantir maior controle e integridade dos dados, oferecendo um ambiente mais seguro e estruturado.
+Isso significa reduzir riscos de vazamento de informações, perda de dados e inconsistências nos registros.
+No final, buscamos alcançar maior eficiência operacional, confiabilidade nos processos e uma experiência mais satisfatória para todos os usuários do sistema.
+- Desafios no Desenvolvimento
+Durante o desenvolvimento do projeto, enfrentamos alguns desafios importantes:
+Primeiro, tivemos que lidar com a curva de aprendizado do GitHub, precisando dominar rapidamente o versionamento e o controle de código.
+Também tivemos que nos adaptar ao Jira e ao método Kanban, aprendendo a organizar tarefas e fluxos de trabalho de forma estruturada.
+Outro desafio foi a integração entre linguagens, pois o projeto utiliza Python e C, o que exigiu soluções para que elas funcionassem bem em conjunto.
+Além disso, tivemos que enfrentar o aprendizado acelerado, já que precisávamos dominar novas ferramentas e metodologias em pouco tempo, e o desenvolvimento da infraestrutura, que exigiu planejamento e execução cuidadosos.
+Apesar dessas dificuldades, conseguimos superar os obstáculos e avançar na construção de um sistema que atenda aos objetivos do projeto.
+
+Ramon (16,17,18)
+- Uso de IA na construção do projeto:
+Durante o desenvolvimento do nosso projeto, também utilizamos Inteligência Artificial como ferramenta de apoio.
+A IA nos ajudou principalmente na criação e revisão da documentação, oferecendo sugestões de melhoria e organização de conteúdo.
+Além disso, foi muito útil na geração de ideias para os atributos e estrutura do banco de dados, ajudando a validar e otimizar o modelo que estávamos construindo.
+- Ideias para evolução do projeto:
+Durante o desenvolvimento, identificamos várias melhorias que poderiam tornar o sistema mais completo e interativo, mas que não conseguimos implementar por falta de tempo.
+Entre elas estão o versionamento, para controlar alterações; um quadro de notificações e envio automático de e-mails, para melhorar a comunicação;
+um ChatBot de auxílio, para dúvidas rápidas dos alunos;
+e um chat entre alunos e professores, funcionando como um fórum de ajuda.
+- Conclusão:
+Em resumo, nosso projeto mostrou como é possível digitalizar e centralizar os processos administrativos e acadêmicos, criando um sistema único que organiza as informações, reduz erros e melhora a eficiência.
+Essa solução representa um passo importante para tornar a gestão mais confiável e estruturada, além de abrir espaço para futuras melhorias e funcionalidades.
+
