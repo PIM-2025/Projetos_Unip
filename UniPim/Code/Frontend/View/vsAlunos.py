@@ -24,17 +24,34 @@ class PaginaAlunos(customtkinter.CTkFrame):
         self.refresh_icon = self._carregar_imagem("Assets/Atualizar.png")
         
         # Botões
-        self.botao_adicionar = customtkinter.CTkButton(self.frame_botoes, text="", image=self.add_icon, width=32, fg_color="transparent", command=self.adicionar_item)
-        self.botao_adicionar.pack(side='left', padx=(0, 5))
+        self.botao_adicionar = customtkinter.CTkButton(
+            self.frame_botoes, text="", image=self.add_icon,
+            width=40, height=40, fg_color="transparent",
+            command=self.adicionar_item
+        )
+        self.botao_adicionar.pack(side='left', padx=5)
 
-        self.botao_editar = customtkinter.CTkButton(self.frame_botoes, text="", image=self.edit_icon, width=32, fg_color="transparent", command=self.editar_item, state="disabled")
+        self.botao_editar = customtkinter.CTkButton(
+            self.frame_botoes, text="", image=self.edit_icon,
+            width=40, height=40, fg_color="transparent",
+            command=self.editar_item, state="disabled"
+        )
         self.botao_editar.pack(side='left', padx=5)
 
-        self.botao_excluir = customtkinter.CTkButton(self.frame_botoes, text="", image=self.delete_icon, width=32, fg_color="transparent", command=self.excluir_item, state="disabled")
+        self.botao_excluir = customtkinter.CTkButton(
+            self.frame_botoes, text="", image=self.delete_icon,
+            width=40, height=40, fg_color="transparent",
+            command=self.excluir_item, state="disabled"
+        )
         self.botao_excluir.pack(side='left', padx=5)
 
-        self.botao_atualizar = customtkinter.CTkButton(self.frame_botoes, text="", image=self.refresh_icon, width=32, fg_color="transparent", command=self.atualizar_grid)
+        self.botao_atualizar = customtkinter.CTkButton(
+            self.frame_botoes, text="", image=self.refresh_icon,
+            width=40, height=40, fg_color="transparent",
+            command=self.atualizar_grid
+        )
         self.botao_atualizar.pack(side='left', padx=5)
+
 
 
         # Dados para a tabela
