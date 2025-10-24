@@ -69,10 +69,14 @@ O backend é responsável por toda a lógica de negócios e comunicação com o 
 2.  Execute o seguinte comando para compilar o servidor. O `Makefile` na pasta `src` também pode ser usado com o comando `make`.
 
     ```bash
-    gcc -I include src/servidor.c src/banco.c src/cJSON.c src/sqlite3.c -o build/servidor.exe -lws2_32
+    gcc -I include src/servidor.c src/civetweb.c routes/alunos.c utils/response.c -o build/servidor.exe -lws2_32
+    gcc -I include -DNO_SSL src/servidor.c src/civetweb.c routes/alunos.c utils/response.c -o build/servidor.exe -lws2_32
     ```
 
-    Este comando compila os arquivos-fonte em C e cria o executável `servidor.exe` na pasta `build`.
+    Este comando compila todos os fontes necessários (`servidor.c`, o `civetweb.c`, a rota de alunos e o utilitário de resposta) e cria o executável `servidor.exe` na pasta `build`.
+
+    **Nota:** Certifique-se de ter os arquivos `civetweb.c` e `civetweb.h` na pasta `src` e `include` respectivamente. Você pode baixá-los do repositório oficial do Civetweb no GitHub.
+
 
 **Iniciando o Servidor:**
 
@@ -88,7 +92,7 @@ O backend é responsável por toda a lógica de negócios e comunicação com o 
     servidor.exe
     ```
 
-    O servidor estará em execução e aguardando conexões na porta `5050`.
+    O servidor estará em execução e aguardando conexões na porta `8080`.
 
 ### 2. Frontend
 
