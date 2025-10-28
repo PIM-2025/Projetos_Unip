@@ -1,0 +1,8 @@
+{
+  "label": "Sistema de Cadastro de Alunos",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Nosso sistema de cadastro no estilo ERP"
+  }
+}
