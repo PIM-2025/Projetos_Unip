@@ -5,7 +5,7 @@
 #include "sqlite3.h" // Incluir a biblioteca do SQLite
 #include "banco.h"   // Incluir nosso próprio cabeçalho
 
-#define DB_FILE "data/unipim.db" // Caminho correto para o arquivo do banco
+#define DB_FILE "C:\\Users\\Usuario\\OneDrive\\Documentos\\1_teste_massari\\aula\\Include\\unipim.db" // Caminho correto para o arquivo do banco
 
 int inicializar_banco(sqlite3 **db)
 {
@@ -17,98 +17,194 @@ int inicializar_banco(sqlite3 **db)
     sqlite3_close(*db);
     return 1; // Retornar 1 para erro, 0 para sucesso
   }
-
-  const char *sql =
-      "CREATE TABLE IF NOT EXISTS aulas ("
-      "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-      "turma TEXT NOT NULL,"
-      "professor TEXT NOT NULL,"
-      "conteudo TEXT NOT NULL,"
-      "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP"
-      ");";
-
-  rc = sqlite3_exec(*db, sql, 0, 0, &erro);
-  if (rc != SQLITE_OK)
-  {
-    fprintf(stderr, "Erro no SQL ao criar tabela: %s\n", erro);
-    sqlite3_free(erro);
-    sqlite3_close(*db);
-    return 1;
-  }
-
-  printf("Banco de dados inicializado com sucesso.\n");
-  return 0; // Sucesso
+return 0;
 }
 
 void fechar_banco(sqlite3 *db)
 {
-  if (db)
-  {
-    sqlite3_close(db);
-  }
+  sqlite3_close(db);
 }
-
-// VERSÃO SEGURA contra SQL Injection
-int registrar_aula(sqlite3 *db, const char *turma, const char *professor, const char *conteudo)
-{
-  sqlite3_stmt *stmt;
-  const char *sql = "INSERT INTO aulas (turma, professor, conteudo) VALUES (?, ?, ?);";
-  int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
-
-  if (rc != SQLITE_OK)
-  {
-    fprintf(stderr, "Falha ao preparar o statement: %s\n", sqlite3_errmsg(db));
-    return 1;
-  }
-
-  // Binds para evitar SQL Injection
-  sqlite3_bind_text(stmt, 1, turma, -1, SQLITE_TRANSIENT);
-  sqlite3_bind_text(stmt, 2, professor, -1, SQLITE_TRANSIENT);
-  sqlite3_bind_text(stmt, 3, conteudo, -1, SQLITE_TRANSIENT);
+//=================================CRUD USUARIO=================================//
+//---------------Criar USUARIO------------
+int inserir_usuario(sqlite3 *db, const char *nome, const char *email, const char *senha, const char *tipo, const char *dtcadastro, int status){
+    const char *sql = "INSERT INTO USUARIO (NOME, EMAIL, SENHA, TIPOUSUARIO, DTCADASTRO, STATUS) VALUES (?, ?, ?, ?, ?, ?);";
+    sqlite3_stmt *stmt;
+    
+int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar INSERT: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+  
+  sqlite3_bind_text(stmt, 1, nome, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 2, email, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 3, senha, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 4, tipo, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_text(stmt, 5, dtcadastro, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_int(stmt, 6, status);
 
   rc = sqlite3_step(stmt);
-  if (rc != SQLITE_DONE)
-  {
-    fprintf(stderr, "Falha ao executar o statement: %s\n", sqlite3_errmsg(db));
+  sqlite3_finalize(stmt);
+
+  return rc == SQLITE_DONE ? 0 : 1;
+
+  }
+//---------------Listar USUARIO------------
+int listar_usuario(sqlite3 *db) {
+    const char *sql = "SELECT IDUSUARIO, NOME, EMAIL, TIPOUSUARIO, DTCADASTRO, STATUS FROM USUARIO;";
+    
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar SELECT: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    
+    printf("Lista de usuários:\n");
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        printf("ID: %d | Nome: %s | Email: %s | Tipo: %s | Cadastro: %s | Status: %d\n",
+               sqlite3_column_int(stmt, 0),
+               sqlite3_column_text(stmt, 1),
+               sqlite3_column_text(stmt, 2),
+               sqlite3_column_text(stmt, 3),
+               sqlite3_column_text(stmt, 4),
+               sqlite3_column_int(stmt, 5));
+    }
     sqlite3_finalize(stmt);
-    return 1;
+    return 0;
+}
+//---------------Atualizar USUARIO------------
+  int atualizar_usuario(sqlite3 *db, int id, const char *novo_nome, const char *novo_email, const char *nova_senha, int novo_status) {
+    const char *sql = "UPDATE USUARIO SET NOME = ?, EMAIL = ?, SENHA = ?, STATUS = ? WHERE IDUSUARIO = ?;";
+    sqlite3_stmt *stmt;
+    
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar UPDATE: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    
+    sqlite3_bind_text(stmt, 1, novo_nome, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, novo_email, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, nova_senha, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 4, novo_status);
+    sqlite3_bind_int(stmt, 5, id);
+    
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    
+    return rc == SQLITE_DONE ? 0 : 1;
   }
+//---------------Deletar USUARIO------------
+   int deletar_usuario(sqlite3 *db, int id){
+    const char * sql = "DELETE FROM USUARIO WHERE IDUSUARIO = ?;";
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK){
+        fprintf(stderr, "Erro ao preparar DELETE: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    
+    sqlite3_bind_int(stmt, 1, id);
 
-  printf("Registro inserido no banco de dados com sucesso.\n");
-  sqlite3_finalize(stmt);
-  return 0;
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    return rc == SQLITE_DONE ? 0 : 1;
+
+   }
+   //---------------------CRUD USUARIO----------------------------//
+
+   //=====================================================================//
+   
+   //----------------------CRUD CURSO----------------------------//
+
+
+   //---------------Criar CURSO------------
+
+   int inserir_curso(sqlite3 *db, const char *nome, const char *descricao, const char *turno, int anoletivo ){
+    const char *sql = "INSERT INTO CURSO (NOME, DESCRICAO, TURNO, ANOLETIVO) VALUES (?, ?, ?, ?);";
+    sqlite3_stmt *stmt;
+
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar INSERT: %s\n", sqlite3_errmsg(db));
+        return 1;
+      }
+
+      sqlite3_bind_text(stmt, 1, nome, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 2, descricao, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 3, turno, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_int(stmt, 4, anoletivo);
+
+      rc = sqlite3_step(stmt);
+      sqlite3_finalize(stmt);
+
+      return rc == SQLITE_DONE ? 0 : 1;
+   }
+
+   //---------------Listar CURSO------------
+    int listar_curso(sqlite3 *db) {
+      const char *sql = "SELECT IDCURSO, NOME, DESCRICAO, TURNO, ANOLETIVO FROM CURSO;";
+      
+      sqlite3_stmt *stmt;
+      int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+      if (rc != SQLITE_OK) {
+          fprintf(stderr, "Erro ao preparar SELECT: %s\n", sqlite3_errmsg(db));
+          return 1;
+      }
+      
+      printf("Lista de cursos:\n");
+      while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+          printf("ID: %d | Nome: %s | Descricao: %s | Turno: %s | Ano Letivo: %d\n",
+                sqlite3_column_int(stmt, 0),
+                sqlite3_column_text(stmt, 1),
+                sqlite3_column_text(stmt, 2),
+                sqlite3_column_text(stmt, 3),
+                sqlite3_column_int(stmt, 4));
+      }
+      sqlite3_finalize(stmt);
+      return 0;
+    }
+    //---------------Atualizar CURSO------------
+
+    int atualizar_curso(sqlite3 *db, const char *novo_nome_curso, const char *nova_descricao, const char *novo_turno, int novo_anoletivo, int id_curso){
+      const char *sql = "UPDATE CURSO SET NOME = ?, DESCRICAO = ?, TURNO = ?, ANOLETIVO = ? WHERE IDCURSO = ?;";
+      sqlite3_stmt *stmt;
+      
+      int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+      if (rc != SQLITE_OK) {
+          fprintf(stderr, "Erro ao preparar UPDATE: %s\n", sqlite3_errmsg(db));
+          return 1;
+      }
+      
+      sqlite3_bind_text(stmt, 1, novo_nome_curso, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 2, nova_descricao, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 3, novo_turno, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_int(stmt, 4, novo_anoletivo);
+      sqlite3_bind_int(stmt, 5, id_curso);
+
+      rc = sqlite3_step(stmt);
+      sqlite3_finalize(stmt);
+      return rc == SQLITE_DONE ? 0 : 1;
 }
 
-// VERSÃO ROBUSTA usando cJSON
-int listar_aulas(sqlite3 *db, cJSON *array_aulas)
-{
-  sqlite3_stmt *stmt;
-  const char *sql = "SELECT id, turma, professor, conteudo, timestamp FROM aulas ORDER BY timestamp DESC;";
-  int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, 0);
+  //-------------Deletar Curso------------
 
-  if (rc != SQLITE_OK)
-  {
-    fprintf(stderr, "Erro ao preparar listagem de aulas: %s\n", sqlite3_errmsg(db));
-    return 1;
-  }
+  int deletar_curso(sqlite3 *db, int id_curso){
+    const char * sql = "DELETE FROM CURSO WHERE IDCURSO = ?;";
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK){
+        fprintf(stderr, "Erro ao preparar DELETE: %s\n", sqlite3_errmsg(db));
+        return 1;
+    }
+    
+    sqlite3_bind_int(stmt, 1, id_curso);
 
-  // Itera sobre os resultados da consulta
-  while ((rc = sqlite3_step(stmt)) == SQLITE_ROW)
-  {
-    cJSON *aula_json = cJSON_CreateObject();
-    cJSON_AddNumberToObject(aula_json, "id", sqlite3_column_int(stmt, 0));
-    cJSON_AddStringToObject(aula_json, "turma", (const char *)sqlite3_column_text(stmt, 1));
-    cJSON_AddStringToObject(aula_json, "professor", (const char *)sqlite3_column_text(stmt, 2));
-    cJSON_AddStringToObject(aula_json, "conteudo", (const char *)sqlite3_column_text(stmt, 3));
-    cJSON_AddStringToObject(aula_json, "timestamp", (const char *)sqlite3_column_text(stmt, 4));
-    cJSON_AddItemToArray(array_aulas, aula_json);
-  }
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    return rc == SQLITE_DONE ? 0 : 1;
 
-  if (rc != SQLITE_DONE)
-  {
-    fprintf(stderr, "Erro ao iterar sobre as aulas: %s\n", sqlite3_errmsg(db));
-  }
-
-  sqlite3_finalize(stmt);
-  return 0;
-}
+   }
+    
+  //---------------------CRUD CURSO----------------------------//
