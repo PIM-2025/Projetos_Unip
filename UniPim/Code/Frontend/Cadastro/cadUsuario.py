@@ -14,6 +14,8 @@ class JanelaCadastroUsuario(customtkinter.CTkToplevel):
         self.transient(parent)
         self.grab_set()
         self.resizable(False, False)
+        
+        self.after(10, self._center_window)
 
         self.is_edit_mode = self.usuario_data is not None
 

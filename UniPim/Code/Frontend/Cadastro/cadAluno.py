@@ -2,11 +2,6 @@ import customtkinter
 
 class JanelaCadastroAluno(customtkinter.CTkToplevel):
     def __init__(self, parent, aluno_data=None):
-        """
-        Cria a janela de cadastro/edição.
-        :param parent: A janela pai.
-        :param aluno_data: Uma tupla com os dados do aluno para edição, ou None para novo cadastro.
-        """
         super().__init__(parent)
         self.parent = parent
         self.aluno_data = aluno_data
@@ -14,8 +9,6 @@ class JanelaCadastroAluno(customtkinter.CTkToplevel):
         self.title("Cadastro de Aluno" if aluno_data is None else "Editar Aluno")
         self.geometry("400x400")
         self.resizable(False, False)
-
-        # Centraliza a janela em relação à janela pai
         self.after(10, self._center_window)
 
         # --- Campos do formulário ---

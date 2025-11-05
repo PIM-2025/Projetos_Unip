@@ -64,7 +64,6 @@ class PaginaLogin(ctk.CTk):
         senha = self.campo_senha.get()
         self.resultado_login.configure(text='Login bem-sucedido!', text_color='green')
         self.after(500, lambda: self._on_success(usuario))
-
         if usuario == 'admin' and senha == 'admin123':
             self.resultado_login.configure(text='Login bem-sucedido!', text_color='green')
             # Passa o nome de usuário para a função de sucesso

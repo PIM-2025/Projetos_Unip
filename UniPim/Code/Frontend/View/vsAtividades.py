@@ -4,9 +4,9 @@ from tkinter import ttk
 from PIL import Image
 from tkinter import messagebox
 import os
-from Frontend.Cadastro.cadAluno import JanelaCadastroAluno
+from Frontend.Cadastro.cadAtividade import JanelaCadastroAtividade # Importar a janela correta para atividades
 
-class PaginaAlunos(customtkinter.CTkFrame):
+class PaginaAtividades(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -15,7 +15,7 @@ class PaginaAlunos(customtkinter.CTkFrame):
         self.itens_excluidos = set()
 
         self.frame_botoes = customtkinter.CTkFrame(self, fg_color="transparent")
-        self.frame_botoes.pack(fill='x', padx=10, pady=(10, 0))
+        self.frame_botoes.pack(fill='x', padx=10, pady=(10, 0), background='white')
 
         # Carregar ícones
         self.add_icon = self._carregar_imagem("Assets/Novo.png")
@@ -96,7 +96,7 @@ class PaginaAlunos(customtkinter.CTkFrame):
 
     def adicionar_item(self):
         # Abre a janela de cadastro sem passar dados, indicando um novo aluno
-        JanelaCadastroAluno(self)
+        JanelaCadastroAtividade(self) # Chamar a janela correta para atividades
 
     def editar_item(self):
         selected_item_id = self.tree.selection()
@@ -106,7 +106,7 @@ class PaginaAlunos(customtkinter.CTkFrame):
         # Pega os valores da linha selecionada no grid
         item_values = self.tree.item(selected_item_id[0], 'values')
         # Abre a janela de cadastro passando os dados do aluno para edição
-        JanelaCadastroAluno(self, aluno_data=item_values)
+        JanelaCadastroAtividade(self, aluno_data=item_values)
 
     def excluir_item(self):
         print("Botão Excluir Clicado")

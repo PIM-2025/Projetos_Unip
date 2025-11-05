@@ -16,6 +16,7 @@ from View.vsMaterias import PaginaMaterias
 from View.vsCursos import PaginaCursos
 from View.vsUsuarios import PaginaUsuarios
 from View.vsSalas import PaginaSalas
+from View.vsAtividades import PaginaAtividades
 
 class UniPimApp(customtkinter.CTk):
 
@@ -153,11 +154,11 @@ class UniPimApp(customtkinter.CTk):
         self.ribbon_frames = {}
         icones_abas = {
             "Cadastros": "Assets/Cadastros.png",
-            "Consultas": "Assets/Consultas.png",
+            "Atividades e Avaliações": "Assets/AtividadesProvas.png",
             "Relatórios": "Assets/Relatorios.png"
         }
 
-        abas_esquerda = ["Cadastros", "Consultas", "Relatórios"]
+        abas_esquerda = ["Cadastros", "Atividades e Avaliações", "Relatórios"]
         for aba_nome in abas_esquerda:
             frame = customtkinter.CTkFrame(self.ribbon_content_area)
             self.ribbon_frames[aba_nome] = frame
@@ -168,10 +169,13 @@ class UniPimApp(customtkinter.CTk):
         self.criar_botao_utilitario(self.tab_bar, "Sair", "Assets/Sair.png", self.quit, width=80, fg_color="#D2042D", hover_color="#A50021")
         self.criar_botao_utilitario(self.tab_bar, "Configurações", "Assets/Config.png", lambda: self.mostrar_pagina(PaginaConfiguracoes), width=140)
 
-        self.adicionar_botoes_ribbon()
+        self.adicionar_botoes_ribbon_cadastros()
+        self.adicionar_botoes_ribbon_atividades()
+        
         self.tab_buttons = {w.cget("text"): w for w in self.tab_bar.winfo_children() 
                             if isinstance(w, customtkinter.CTkButton) and w.cget("text") in abas_esquerda}
 
+        self.ativar_aba(self.ribbon_frames["Atividades e Avaliações"], "Atividades e Avaliações")
         self.ativar_aba(self.ribbon_frames["Cadastros"], "Cadastros")
 
     def ativar_aba_visual(self, nome_aba):
@@ -217,13 +221,18 @@ class UniPimApp(customtkinter.CTk):
             else:
                 botao.configure(border_width=0)
 
-    def adicionar_botoes_ribbon(self):
+    def adicionar_botoes_ribbon_cadastros(self):
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Usuários", "Assets/Usuario.png", lambda: self.mostrar_pagina(PaginaUsuarios))
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Alunos", "Assets/Aluno.png", lambda: self.mostrar_pagina(PaginaAlunos))
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Professores", "Assets/Professor.png", lambda: self.mostrar_pagina(PaginaProfessores))
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Cursos", "Assets/Curso.png", lambda: self.mostrar_pagina(PaginaCursos))
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Matérias", "Assets/Materias.png", lambda: self.mostrar_pagina(PaginaMaterias))
         self.criar_botao_acao(self.ribbon_frames["Cadastros"], "Salas", "Assets/Sala.png", lambda: self.mostrar_pagina(PaginaSalas))
+
+    def adicionar_botoes_ribbon_atividades(self):
+        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Atividades", "Assets/Atividades.png", lambda: self.mostrar_pagina(PaginaAtividades))
+        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Provas", "Assets/Provas.png", lambda: print("Provas"))
+        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Registro de Frequência", "Assets/Frequencia.png", lambda: print("Registro de Frequência"))
 
     def obter_nome_aba(self, page_class):
         """Retorna o nome de exibição para uma classe de página."""
@@ -235,6 +244,7 @@ class UniPimApp(customtkinter.CTk):
             PaginaMaterias: "Matérias",
             PaginaSalas: "Salas",
             PaginaInicio: "Início",
+            PaginaAtividades: "Atividades"
         }
         return nomes.get(page_class, "Nova Aba")
 
