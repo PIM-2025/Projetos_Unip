@@ -69,7 +69,6 @@ int listar_usuario(sqlite3 *db) {
                sqlite3_column_text(stmt, 3),
                sqlite3_column_text(stmt, 4),
                sqlite3_column_int(stmt, 5));
-               sqlite3_column_int(stmt, 5);
     }
     sqlite3_finalize(stmt);
     return 0;
@@ -215,8 +214,8 @@ int listar_usuario(sqlite3 *db) {
    //----------------------CRUD ALUNO----------------------------//
 
     //---------------Criar ALUNO------------
-    int inserir_aluno(sqlite3 *db, const char *RA, const char *dtnascimento, int *cpf, const char *email, int *telefone, int *status){
-      const char *sql = "INSERT INTO USUARIO (RA, DTNASCIMENTO, CPF, EMAIL, TELEFONE, STATUS) VALUES (?, ?, ?, ?, ?, ?);";
+    int inserir_aluno(sqlite3 *db, const char *RA, const char *dtnascimento, int cpf, const char *email, int telefone, int status){
+      const char *sql = "INSERT INTO ALUNO (RA, DTNASCIMENTO, CPF, EMAIL, TELEFONE, STATUS) VALUES (?, ?, ?, ?, ?, ?);";
       sqlite3_stmt *stmt;
 
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -227,10 +226,8 @@ int listar_usuario(sqlite3 *db) {
 
     sqlite3_bind_text(stmt, 1, RA, -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 2, dtnascimento, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(stmt, 3, cpf, -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 3, cpf);
     sqlite3_bind_text(stmt, 4, email, -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(stmt, 5, telefone, -1, SQLITE_TRANSIENT);
     sqlite3_bind_int(stmt, 5, telefone);
     sqlite3_bind_int(stmt, 6, status);
 
@@ -241,7 +238,7 @@ int listar_usuario(sqlite3 *db) {
 
   }
   //----------------------Listar ALUNO-----------
-  int listar_usuario(sqlite3 *db) {
+  int listar_aluno(sqlite3 *db) {
     const char *sql = "SELECT RA, DTNASCIMENTO, CPF, EMAIL, TELEFONE, STATUS FROM ALUNO;";
 
     sqlite3_stmt *stmt;
@@ -259,16 +256,15 @@ int listar_usuario(sqlite3 *db) {
         sqlite3_column_int(stmt, 2),
         sqlite3_column_text(stmt, 3),
         sqlite3_column_int(stmt, 4),
-        sqlite3_column_int(stmt, 5),
         sqlite3_column_int(stmt, 5)
-        );
+      );
       }
       sqlite3_finalize(stmt);
       return 0;
     }
 //----------Atualizar ALUNO---------------
 
-int atualizar_int(sqlite3 *db, const char *RA, const char *novo_dtnascimento,int novo_cpf, const char *novo_email, int novo_telefone,int novo_status) {
+int atualizar_aluno(sqlite3 *db, const char *RA, const char *novo_dtnascimento,int novo_cpf, const char *novo_email, int novo_telefone,int novo_status) {
     const char *sql = "UPDATE ALUNO SET DTNASCIMENTO = ?, CPF = ?, EMAIL = ?, TELEFONE = ?, STATUS = ? WHERE RA = ?;";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -290,7 +286,7 @@ int atualizar_int(sqlite3 *db, const char *RA, const char *novo_dtnascimento,int
     return rc == SQLITE_DONE ? 0 : 1;
 }
 //------------Deletar ALUNO---------------
-int deeletar_aluno(sqlite3 *db, int RA){
+int deletar_aluno(sqlite3 *db, const char *RA){
   const char * sql = "DELETE FROM ALUNO WHERE RA = ?;";
   sqlite3_stmt *stmt;
   int rc = sqlite3_prepare_v2(db, sql , -1, &stmt, NULL);
@@ -299,7 +295,7 @@ int deeletar_aluno(sqlite3 *db, int RA){
     return 1;
   }
 
-  sqlite3_bind_int(stmt, 1, RA);
+  sqlite3_bind_text(stmt, 1, RA, -1, SQLITE_TRANSIENT);
 
   rc = sqlite3_step(stmt);
   sqlite3_finalize(stmt);
@@ -312,7 +308,7 @@ int deeletar_aluno(sqlite3 *db, int RA){
 //------------------------CRUD AULA---------------------//
 //------------Criar AULA--------------
 int inserir_aula(sqlite3 *db, const char *dtaula, const char *horario, const char *obs){
-  const char *sql = "INSERT INTO AULA (IDAULA, DTAULA, HORARIO, OBS) VALUES (?, ?, ?, ?);";
+  const char *sql = "INSERT INTO AULA (DTAULA, HORARIO, OBS) VALUES (?, ?, ?);";
   sqlite3_stmt *stmt;
 
   int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -343,8 +339,8 @@ int listar_aula(sqlite3 *db) {
 
     printf("Lista de aulas:\n");
     while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-      printf("ID: %s | Data: %s | Horario: %s | Obs: %s\n",
-      sqlite3_column_text(stmt, 0),
+      printf("ID: %d | Data: %s | Horario: %s | Obs: %s\n",
+      sqlite3_column_int(stmt, 0),
       sqlite3_column_text(stmt, 1),
       sqlite3_column_text(stmt, 2),
       sqlite3_column_text(stmt, 3)
@@ -384,7 +380,7 @@ int deletar_aula(sqlite3 *db, int idaula){
     return 1;
   }
 
-  sqlite3_bind_text(stmt, 1, idaula, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_int(stmt, 1, idaula);
 
   rc = sqlite3_step(stmt);
   sqlite3_finalize(stmt);
@@ -397,8 +393,8 @@ int deletar_aula(sqlite3 *db, int idaula){
 //------------------------CRUD DISCIPLINA---------------------//
 
 //------------Criar DISCIPLINA--------------
-int inserir_disciplina(sqlite3 *db, const char *nomedisciplina, int carga_horaria){
-  const char *sql = "INSERT INTO DISCIPLINA (NOME, CARGAHORARIA) VALUES (?, ?, ?);";
+int inserir_disciplina(sqlite3 *db, const char *nomedisciplina, int cargahoraria){
+  const char *sql = "INSERT INTO DISCIPLINA (NOMEDISCIPLINA, CARGAHORARIA) VALUES (?, ?);";
   sqlite3_stmt *stmt;
 
   int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -408,7 +404,7 @@ int inserir_disciplina(sqlite3 *db, const char *nomedisciplina, int carga_horari
   }
 
   sqlite3_bind_text(stmt, 1, nomedisciplina, -1, SQLITE_TRANSIENT);
-  sqlite3_bind_int(stmt, 2, carga_horaria);
+  sqlite3_bind_int(stmt, 2, cargahoraria);
 
   rc = sqlite3_step(stmt);
   sqlite3_finalize(stmt);
@@ -417,7 +413,7 @@ int inserir_disciplina(sqlite3 *db, const char *nomedisciplina, int carga_horari
 }
 //------------Listar DISCIPLINA--------------
 int listar_disciplina(sqlite3 *db) {
-  const char *sql = "SELECT IDDISCIPLINA, NOME, CARGAHORARIA FROM DISCIPLINA;";
+  const char *sql = "SELECT IDDISCIPLINA, NOMEDISCIPLINA, CARGAHORARIA FROM DISCIPLINA;";
 
   sqlite3_stmt *stmt;
   int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -439,7 +435,7 @@ int listar_disciplina(sqlite3 *db) {
 }
 //------------Atualizar DISCIPLINA--------------
 int atualizar_disciplina(sqlite3 *db, int iddisciplina, const char *novo_nome, int nova_carga_horaria) {
-  const char *sql = "UPDATE DISCIPLINA SET NOME = ?, CARGAHORARIA = ? WHERE IDDISCIPLINA = ?;";
+  const char *sql = "UPDATE DISCIPLINA SET NOMEDISCIPLINA = ?, CARGAHORARIA = ? WHERE IDDISCIPLINA = ?;";
   sqlite3_stmt *stmt;
 
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -667,7 +663,7 @@ int deletar_entrega_exercicio(sqlite3 *db, int identrega){
 //-------------------------CRUD EXERCICIO---------------------//
 //------------Criar EXERCICIO--------------
 int inserir_exercicio(sqlite3 *db, const char *titulo, const char *descricao, const char *dtentrega){
-  const char *sql = "INSERT INTO EXERCICIO (TITULO, DESCRICAO, DTENTREGA, ) VALUES (?, ?, ?, );";
+  const char *sql = "INSERT INTO EXERCICIO (TITULO, DESCRICAO, DTENTREGA) VALUES (?, ?, ?);";
   sqlite3_stmt *stmt;
 
   int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -763,7 +759,7 @@ int inserir_frequencia(sqlite3 *db, int presenca, const char *ra){
     return 1;
   }
 
-  sqlite3_bind_text(stmt, 1, presenca, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_int(stmt, 1, presenca);
   sqlite3_bind_text(stmt, 2, ra, -1, SQLITE_TRANSIENT);
 
   rc = sqlite3_step(stmt);
@@ -847,7 +843,7 @@ int inserir_nota(sqlite3 *db, int valor, const char *tipoavaliacao, const char *
     return 1;
   }
 
-  sqlite3_bind_text(stmt, 1, valor, -1, SQLITE_TRANSIENT);
+  sqlite3_bind_int(stmt, 1, valor);
   sqlite3_bind_text(stmt, 2, tipoavaliacao, -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 3, ra, -1, SQLITE_TRANSIENT);
 
