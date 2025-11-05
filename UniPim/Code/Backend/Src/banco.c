@@ -208,3 +208,75 @@ int listar_usuario(sqlite3 *db) {
    }
     
   //---------------------CRUD CURSO----------------------------//
+
+  //=====================================================================//
+   
+   //----------------------CRUD ALUNO----------------------------//
+
+    //---------------Criar ALUNO------------
+    int inserir_aluno(sqlite3 *db, const char *RA, const char *dtnascimento, int *cpf, const char *email, int *telefone, int *status){
+      const char *sql = "INSERT INTO USUARIO (RA, DTNASCIMENTO, CPF, EMAIL, TELEFONE, STATUS) VALUES (?, ?, ?, ?, ?, ?);";
+      sqlite3_stmt *stmt;
+    
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+      if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar INSERT: %s\n", sqlite3_errmsg(db));
+        return 1;
+      }
+
+    sqlite3_bind_text(stmt, 1, RA, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, dtnascimento, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 3, cpf, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 4, email, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 5, telefone, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 6, status);
+
+    rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    return rc == SQLITE_DONE ? 0 : 1;
+    
+  }
+  //----------------------Listar ALUNO-----------
+  int listar_usuario(sqlite3 *db) {
+    const char *sql = "SELECT RA, DTNASCIMENTO, CPF, EMAIL, TELEFONE, STATUS FROM ALUNO;";
+
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+      if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar SELECT: %s\n", sqlite3_errmsg(db));
+        return 1;
+      }
+
+      printf("Lista de alunos:\n");
+      while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+        printf("RA: %s | Nascimento: %s | CPF: %d | Email: %s | Telefone: %d | Status: %d\n",
+        sqlite3_column_text(stmt, 0),
+        sqlite3_column_text(stmt, 1),
+        sqlite3_column_int(stmt, 2),
+        sqlite3_column_text(stmt, 3),
+        sqlite3_column_int(stmt, 4),
+        sqlite3_column_int(stmt, 5),
+        );
+      }
+      sqlite3_finalize(stmt);
+      return 0;
+    }
+//----------Atualizar ALUNO---------------
+int atualizar_int(sqlite3 *db, const char RA, const char *dtnascimento, int *cpf, const char *email, int *telefone, int *status) {
+  const char *sql = "UPDATE ALUNO SET DTNASCIMENTO = ?, CPF = ?, EMAIL = ?, TELEFONE = ?, STATUS = ? WHERE RA = ?;";
+  sqlite3_stmt *stmt;
+
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+      if (rc != SQLITE_OK) {
+        fprintf(stderr, "Erro ao preparar SELECT: %s\n", sqlite3_errmsg(db));
+        return 1;
+      }
+
+      sqlite3_bind_text(stmt, 1, novo_dtnascimento, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_int(stmt, 2, novo_cpf, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 3, novo_email, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_int(stmt, 4, novo_telefone, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_text(stmt, 5, novo_status, -1, SQLITE_TRANSIENT);
+      sqlite3_bind_int(stmt, 6, ra);
+}
