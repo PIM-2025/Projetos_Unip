@@ -1,7 +1,7 @@
 #include <stdio.h>
 int main()
 {
-  int tabuleiro;
+  // int tabuleiro;
   int i, j;
   for (i = 0; i < 3; i++)
   {
@@ -9,11 +9,11 @@ int main()
     {
       if (i == j)
       {
-        tabuleiro[i][j] = 1; // Diagonal principal
+        // tabuleiro[i][j] = 1; // Diagonal principal
       }
       else
       {
-        tabuleiro[i][j] = i + j;
+        // tabuleiro[i][j] = i + j;
       }
     }
   }
