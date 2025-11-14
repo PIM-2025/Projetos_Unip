@@ -14,6 +14,9 @@ class JanelaCadastroSala(customtkinter.CTkToplevel):
         self.grab_set()         # Torna a janela modal
         self.resizable(False, False)
 
+        # Centraliza a janela após a criação
+        self.after(10, self._center_window)
+
         # Determina se está em modo de edição ou criação
         self.is_edit_mode = self.sala_data is not None
 
@@ -60,12 +63,28 @@ class JanelaCadastroSala(customtkinter.CTkToplevel):
         self.botao_salvar = customtkinter.CTkButton(self.frame_botoes, text="Salvar", command=self.salvar_sala)
         self.botao_salvar.pack(side="right", padx=(10, 0))
 
-        self.botao_cancelar = customtkinter.CTkButton(self.frame_botoes, text="Cancelar", fg_color="#d9534f", hover_color="#c9302c", command=self.destroy)
+        self.botao_cancelar = customtkinter.CTkButton(self.frame_botoes, text="Cancelar", fg_color="gray", command=self.destroy)
         self.botao_cancelar.pack(side="right")
 
         # Se estiver em modo de edição, preenche os campos
         if self.is_edit_mode:
             self._preencher_campos()
+
+    def _center_window(self):
+        """Centraliza a janela de cadastro em relação à janela principal."""
+        self.update_idletasks()
+        main_window = self.parent.controller 
+        parent_x = main_window.winfo_x()
+        parent_y = main_window.winfo_y()
+        parent_w = main_window.winfo_width()
+        parent_h = main_window.winfo_height()
+        
+        win_w, win_h = self.winfo_width(), self.winfo_height()
+        
+        x = parent_x + (parent_w - win_w) // 2
+        y = parent_y + (parent_h - win_h) // 2
+        
+        self.geometry(f"+{x}+{y}")
 
     def _preencher_campos(self):
         """Preenche os campos do formulário com os dados da sala para edição."""

@@ -11,66 +11,63 @@ class PaginaAtividades(customtkinter.CTkFrame):
         super().__init__(parent)
         self.controller = controller
 
-        # Conjunto para armazenar os RAs dos itens excluídos durante a sessão
+        # Conjunto para armazenar os IDs dos itens excluídos durante a sessão
         self.itens_excluidos = set()
 
-        self.frame_botoes = customtkinter.CTkFrame(self, fg_color="transparent")
-        self.frame_botoes.pack(fill='x', padx=10, pady=(10, 0), background='white')
+        self.frame_superior = customtkinter.CTkFrame(self, fg_color="transparent")
+        self.frame_superior.pack(fill='x', padx=10, pady=(10, 0))
 
         # Carregar ícones
         self.add_icon = self._carregar_imagem("Assets/Novo.png")
         self.edit_icon = self._carregar_imagem("Assets/Editar.png")
         self.delete_icon = self._carregar_imagem("Assets/Excluir.png")
         self.refresh_icon = self._carregar_imagem("Assets/Atualizar.png")
-
-        # Carregar ícones de ordenação (ASC/DESC)
         self.sort_asc_icon = self._carregar_imagem("Assets/Asc.png", (32, 32))
         self.sort_desc_icon = self._carregar_imagem("Assets/Desc.png", (32, 32))
         
         # Botões
         self.botao_adicionar = customtkinter.CTkButton(
-            self.frame_botoes, text="", image=self.add_icon,
+            self.frame_superior, text="", image=self.add_icon,
             width=40, height=40, fg_color="transparent",
             command=self.adicionar_item
         )
         self.botao_adicionar.pack(side='left', padx=5)
 
         self.botao_editar = customtkinter.CTkButton(
-            self.frame_botoes, text="", image=self.edit_icon,
+            self.frame_superior, text="", image=self.edit_icon,
             width=40, height=40, fg_color="transparent",
             command=self.editar_item, state="disabled"
         )
         self.botao_editar.pack(side='left', padx=5)
 
         self.botao_excluir = customtkinter.CTkButton(
-            self.frame_botoes, text="", image=self.delete_icon,
+            self.frame_superior, text="", image=self.delete_icon,
             width=40, height=40, fg_color="transparent",
             command=self.excluir_item, state="disabled"
         )
         self.botao_excluir.pack(side='left', padx=5)
 
         self.botao_atualizar = customtkinter.CTkButton(
-            self.frame_botoes, text="", image=self.refresh_icon,
+            self.frame_superior, text="", image=self.refresh_icon,
             width=40, height=40, fg_color="transparent",
             command=self.atualizar_grid
         )
         self.botao_atualizar.pack(side='left', padx=5)
 
-
-
         # Dados para a tabela
-        colunas = ('ra', 'nome', 'curso', 'cpf', 'data_nascimento', 'email', 'telefone')
+        colunas = ('id', 'titulo', 'materia', 'data_entrega')
         self.tree = ttk.Treeview(self, columns=colunas, show='headings')
-        self._sort_state = {} # Dicionário para guardar o estado da ordenação de cada coluna
+        self._sort_state = {} # Dicionário para guardar o estado da ordenação
         
-        # Configura os cabeçalhos e o comando de ordenação para cada coluna
-        self.tree.heading('ra', text='RA', anchor='w', command=lambda: self._ordenar_coluna('ra'))
-        self.tree.heading('nome', text='Nome', anchor='w', command=lambda: self._ordenar_coluna('nome'))
-        self.tree.heading('curso', text='Curso', anchor='w', command=lambda: self._ordenar_coluna('curso'))
-        self.tree.heading('cpf', text='CPF', anchor='w', command=lambda: self._ordenar_coluna('cpf'))
-        self.tree.heading('data_nascimento', text='Data de Nascimento', anchor='w', command=lambda: self._ordenar_coluna('data_nascimento'))
-        self.tree.heading('email', text='E-mail', anchor='w', command=lambda: self._ordenar_coluna('email'))
-        self.tree.heading('telefone', text='Telefone', anchor='w', command=lambda: self._ordenar_coluna('telefone'))
+        # Cabeçalhos com comando de ordenação
+        self.tree.heading('id', text='ID', anchor='w', command=lambda: self._ordenar_coluna('id'))
+        self.tree.heading('titulo', text='Título', anchor='w', command=lambda: self._ordenar_coluna('titulo'))
+        self.tree.heading('materia', text='Matéria', anchor='w', command=lambda: self._ordenar_coluna('materia'))
+        self.tree.heading('data_entrega', text='Data de Entrega', anchor='w', command=lambda: self._ordenar_coluna('data_entrega'))
+
+        # Ajuste de largura das colunas (opcional)
+        self.tree.column('id', width=50)
+        self.tree.column('titulo', width=250)
 
         self._carregar_dados_grid()
 
@@ -86,7 +83,6 @@ class PaginaAtividades(customtkinter.CTkFrame):
         return customtkinter.CTkImage(Image.open(caminho_completo), size=size)
 
     def on_item_select(self, event):
-        # Habilita os botões se um item for selecionado, desabilita caso contrário
         if self.tree.selection():
             self.botao_editar.configure(state="normal")
             self.botao_excluir.configure(state="normal")
@@ -95,7 +91,7 @@ class PaginaAtividades(customtkinter.CTkFrame):
             self.botao_excluir.configure(state="disabled")
 
     def adicionar_item(self):
-        # Abre a janela de cadastro sem passar dados, indicando um novo aluno
+        # Abre a janela de cadastro sem passar dados, indicando uma nova atividade
         JanelaCadastroAtividade(self) # Chamar a janela correta para atividades
 
     def editar_item(self):
@@ -105,32 +101,29 @@ class PaginaAtividades(customtkinter.CTkFrame):
         
         # Pega os valores da linha selecionada no grid
         item_values = self.tree.item(selected_item_id[0], 'values')
-        # Abre a janela de cadastro passando os dados do aluno para edição
-        JanelaCadastroAtividade(self, aluno_data=item_values)
+        # Abre a janela de cadastro passando os dados da atividade para edição
+        JanelaCadastroAtividade(self, atividade_data=item_values)
 
     def excluir_item(self):
-        print("Botão Excluir Clicado")
         selected_item_id = self.tree.selection()
         if not selected_item_id:
             return
         
         # Pede confirmação ao usuário antes de excluir
         confirmado = messagebox.askyesno("Confirmar Exclusão", 
-                                         "Tem certeza que deseja excluir o aluno selecionado?",
+                                         "Tem certeza que deseja excluir a atividade selecionada?",
                                          icon='warning')
         
         if confirmado:
-            # Pega os valores do item antes de deletar para obter o RA
             item_values = self.tree.item(selected_item_id[0], 'values')
-            ra_excluido = item_values[0]
-            self.itens_excluidos.add(ra_excluido) # Adiciona o RA ao conjunto de excluídos
+            id_excluido = item_values[0]
+            self.itens_excluidos.add(id_excluido)
             self.tree.delete(selected_item_id[0])
-            print(f"Aluno com RA {ra_excluido} excluído e marcado para não recarregar.")
+            print(f"Atividade com ID {id_excluido} excluída e marcada para não recarregar.")
 
     def atualizar_grid(self):
-        print("Atualizando grid de alunos...")
+        print("Atualizando grid de atividades...")
         self._carregar_dados_grid()
-        
         print("Grid atualizado.")
     
     def _carregar_dados_grid(self):
@@ -138,49 +131,39 @@ class PaginaAtividades(customtkinter.CTkFrame):
         # Limpa todos os itens existentes no grid
         for i in self.tree.get_children():
             self.tree.delete(i)
-        
+
         # Dados de exemplo
-        alunos_exemplo = [
-            ('H7703G3', 'Gabriel Liesenberg Massari', 'Análise e Des. de Sistemas', '895.676.480-85', '02/09/2004', 'gabriel@gmail.com', '(19)91234-5678'),
-            ('R8975J5', 'João Pedro Caetano', 'Análise e Des. de Sistemas', '456.456.789-00', '20/08/2003', 'joao@gmail.com', '(19)98765-4321'),
-            ('H775590', 'Gustavo Henrique dos S Moreira', 'Análise e Des. de Sistemas', '789.654.321-00', '10/10/2003', 'gugu@hotmail.com', '(19)91234-5678'),
-            ('R951952', 'Jean Flávio de Campos', 'Análise e Des. de Sistemas', '789.456.789-00', '15/05/2003', 'jeanzao@gmail.com', '(19)98774-4321'),
-            ('H7823F3', 'Ramon Guimaraes de Oliveira', 'Análise e Des. de Sistemas', '123.456.123-00', '15/05/2003', 'ramon@gmail.com', '(19)94565-4321')
+        atividades_exemplo = [
+            ('1', 'Trabalho de Engenharia de Software', 'Engenharia de Software I', '30/11/2025'),
+            ('2', 'Prova de Banco de Dados', 'Banco de Dados', '05/12/2025'),
+            ('3', 'Exercícios de Lógica de Programação', 'Algoritmos', '25/11/2025'),
+            ('4', 'Apresentação de Projeto Integrador', 'Projeto Integrador I', '15/12/2025'),
         ]
-        # Insere os alunos na grade apenas se o RA não estiver no conjunto de excluídos
-        for aluno in alunos_exemplo:
-            if aluno[0] not in self.itens_excluidos:
-                self.tree.insert('', tk.END, values=aluno)
+        # Insere as atividades na grade apenas se o ID não estiver no conjunto de excluídos
+        for atividade in atividades_exemplo:
+            if atividade[0] not in self.itens_excluidos:
+                self.tree.insert('', tk.END, values=atividade)
 
     def _ordenar_coluna(self, col):
         """Ordena a treeview pela coluna especificada."""
-        # Determina a direção da ordenação (ascendente ou descendente)
-        reverse = self._sort_state.get(col, False) 
+        reverse = self._sort_state.get(col, False)
         self._sort_state[col] = not reverse
 
-        # Limpa os ícones de ordenação de todas as colunas antes de aplicar o novo
         for c in self.tree['columns']:
             self.tree.heading(c, image='')
 
-
-        # Obtém todos os itens da treeview
         data = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
 
-        # Ordena os dados
         try:
-            # Tenta ordenar numericamente se possível, senão como texto
             data.sort(key=lambda t: float(t[0]), reverse=reverse)
         except ValueError:
             data.sort(key=lambda t: t[0], reverse=reverse)
 
-        # Reorganiza os itens na treeview
         for index, (val, item) in enumerate(data):
             self.tree.move(item, '', index)
 
-        # Define o ícone de ordenação na coluna clicada
         icon = self.sort_desc_icon if reverse else self.sort_asc_icon
         self.tree.heading(col, image=icon)
 
-        # Atualiza a direção da ordenação no cabeçalho para a próxima vez
         for c in self._sort_state:
-            self._sort_state[c] = False if c != col else self._sort_state[col]
+            self._sort_state[c] = False if c != col else self._sort_state[c]

@@ -17,6 +17,8 @@ from View.vsCursos import PaginaCursos
 from View.vsUsuarios import PaginaUsuarios
 from View.vsSalas import PaginaSalas
 from View.vsAtividades import PaginaAtividades
+from View.vsProvas import PaginaProvas
+from View.vsFrequencia import PaginaFrequencia
 
 class UniPimApp(customtkinter.CTk):
 
@@ -175,8 +177,9 @@ class UniPimApp(customtkinter.CTk):
         self.tab_buttons = {w.cget("text"): w for w in self.tab_bar.winfo_children() 
                             if isinstance(w, customtkinter.CTkButton) and w.cget("text") in abas_esquerda}
 
+        # Ativa as abas do ribbon. A última chamada será a aba visível no início.
         self.ativar_aba(self.ribbon_frames["Atividades e Avaliações"], "Atividades e Avaliações")
-        self.ativar_aba(self.ribbon_frames["Cadastros"], "Cadastros")
+        self.ativar_aba(self.ribbon_frames["Cadastros"], "Cadastros") # Esta será a aba padrão ao iniciar
 
     def ativar_aba_visual(self, nome_aba):
         """Mostra o conteúdo de uma aba e atualiza o estilo dos botões."""
@@ -191,9 +194,12 @@ class UniPimApp(customtkinter.CTk):
                 data["button_frame"].configure(fg_color="transparent")
                 data["label_button"].configure(font=customtkinter.CTkFont(weight="normal"))
 
+        # Esconde todas as páginas
+        for data in self.abas_abertas.values():
+            data["pagina"].pack_forget()
+
         pagina_para_ativar = self.abas_abertas[nome_aba]["pagina"]
-        pagina_para_ativar.place(relwidth=1, relheight=1)
-        pagina_para_ativar.tkraise()
+        pagina_para_ativar.pack(expand=True, fill="both")
 
     def ativar_aba(self, frame_para_ativar, nome_aba):
         self.aba_ativa = nome_aba
@@ -231,8 +237,8 @@ class UniPimApp(customtkinter.CTk):
 
     def adicionar_botoes_ribbon_atividades(self):
         self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Atividades", "Assets/Atividades.png", lambda: self.mostrar_pagina(PaginaAtividades))
-        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Provas", "Assets/Provas.png", lambda: print("Provas"))
-        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Registro de Frequência", "Assets/Frequencia.png", lambda: print("Registro de Frequência"))
+        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Provas", "Assets/Provas.png", lambda: self.mostrar_pagina(PaginaProvas))
+        self.criar_botao_acao(self.ribbon_frames["Atividades e Avaliações"], "Registro de Frequência", "Assets/Frequencia.png", lambda: self.mostrar_pagina(PaginaFrequencia))
 
     def obter_nome_aba(self, page_class):
         """Retorna o nome de exibição para uma classe de página."""
@@ -244,7 +250,9 @@ class UniPimApp(customtkinter.CTk):
             PaginaMaterias: "Matérias",
             PaginaSalas: "Salas",
             PaginaInicio: "Início",
-            PaginaAtividades: "Atividades"
+            PaginaAtividades: "Atividades",
+            PaginaProvas: "Provas",
+            PaginaFrequencia: "Frequência"
         }
         return nomes.get(page_class, "Nova Aba")
 

@@ -4,9 +4,9 @@ from tkinter import ttk
 from PIL import Image
 from tkinter import messagebox
 import os
-from Frontend.Cadastro.cadProva import JanelaCadastroProva # Importar a janela correta para provas
+from Frontend.Cadastro.cadFrequencia import JanelaCadastroFrequencia
 
-class PaginaProvas(customtkinter.CTkFrame):
+class PaginaFrequencia(customtkinter.CTkFrame):
     def __init__(self, parent, controller):
         super().__init__(parent)
         self.controller = controller
@@ -55,30 +55,29 @@ class PaginaProvas(customtkinter.CTkFrame):
         self.botao_atualizar.pack(side='left', padx=5)
 
         # Dados para a tabela
-        colunas = ('id', 'titulo', 'materia', 'data_prova')
+        colunas = ('id', 'aluno', 'ra_aluno', 'materia', 'data', 'status')
         self.tree = ttk.Treeview(self, columns=colunas, show='headings')
-        self._sort_state = {} # Dicionário para guardar o estado da ordenação
+        self._sort_state = {}
         
         # Cabeçalhos com comando de ordenação
         self.tree.heading('id', text='ID', anchor='w', command=lambda: self._ordenar_coluna('id'))
-        self.tree.heading('titulo', text='Título', anchor='w', command=lambda: self._ordenar_coluna('titulo'))
+        self.tree.heading('aluno', text='Aluno', anchor='w', command=lambda: self._ordenar_coluna('aluno'))
+        self.tree.heading('ra_aluno', text='RA', anchor='w', command=lambda: self._ordenar_coluna('ra_aluno'))
         self.tree.heading('materia', text='Matéria', anchor='w', command=lambda: self._ordenar_coluna('materia'))
-        self.tree.heading('data_prova', text='Data da Prova', anchor='w', command=lambda: self._ordenar_coluna('data_prova'))
+        self.tree.heading('data', text='Data', anchor='w', command=lambda: self._ordenar_coluna('data'))
+        self.tree.heading('status', text='Status', anchor='center', command=lambda: self._ordenar_coluna('status'))
 
-        # Ajuste de largura das colunas (opcional)
         self.tree.column('id', width=50)
-        self.tree.column('titulo', width=250)
+        self.tree.column('ra_aluno', width=100)
+        self.tree.column('status', anchor='center')
 
         self._carregar_dados_grid()
 
         self.tree.pack(expand=True, fill='both', padx=10, pady=10)
         self.tree.bind("<<TreeviewSelect>>", self.on_item_select)
 
-
     def _carregar_imagem(self, caminho, size=(24, 24)):
-        # O diretório 'Assets' está um nível acima do diretório 'View'
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        # Sobe um nível para o diretório 'frontend' e depois entra em 'Assets'
         caminho_completo = os.path.join(script_dir, "..", caminho)
         return customtkinter.CTkImage(Image.open(caminho_completo), size=size)
 
@@ -91,79 +90,57 @@ class PaginaProvas(customtkinter.CTkFrame):
             self.botao_excluir.configure(state="disabled")
 
     def adicionar_item(self):
-        # Abre a janela de cadastro sem passar dados, indicando uma nova prova
-        JanelaCadastroProva(self) # Chamar a janela correta para provas
+        JanelaCadastroFrequencia(self)
 
     def editar_item(self):
         selected_item_id = self.tree.selection()
-        if not selected_item_id:
-            return
-        
-        # Pega os valores da linha selecionada no grid
+        if not selected_item_id: return
         item_values = self.tree.item(selected_item_id[0], 'values')
-        # Abre a janela de cadastro passando os dados da prova para edição
-        JanelaCadastroProva(self, prova_data=item_values)
+        JanelaCadastroFrequencia(self, frequencia_data=item_values)
 
     def excluir_item(self):
         selected_item_id = self.tree.selection()
-        if not selected_item_id:
-            return
+        if not selected_item_id: return
         
-        # Pede confirmação ao usuário antes de excluir
-        confirmado = messagebox.askyesno("Confirmar Exclusão", 
-                                         "Tem certeza que deseja excluir a prova selecionada?",
-                                         icon='warning')
+        confirmado = messagebox.askyesno("Confirmar Exclusão", "Tem certeza que deseja excluir este registro de frequência?", icon='warning')
         
         if confirmado:
             item_values = self.tree.item(selected_item_id[0], 'values')
             id_excluido = item_values[0]
             self.itens_excluidos.add(id_excluido)
             self.tree.delete(selected_item_id[0])
-            print(f"Prova com ID {id_excluido} excluída e marcada para não recarregar.")
+            print(f"Registro de frequência com ID {id_excluido} excluído.")
 
     def atualizar_grid(self):
-        print("Atualizando grid de provas...")
         self._carregar_dados_grid()
-        print("Grid de provas atualizado.")
     
     def _carregar_dados_grid(self):
-        """Limpa a grade e (re)carrega os dados, ignorando os itens excluídos."""
-        # Limpa todos os itens existentes no grid
         for i in self.tree.get_children():
             self.tree.delete(i)
 
-        # Dados de exemplo
-        provas_exemplo = [
-            ('1', 'Prova 1 - Modelagem de Dados', 'Banco de Dados', '28/11/2025'),
-            ('2', 'Prova 2 - UML e Casos de Uso', 'Engenharia de Software I', '05/12/2025'),
-            ('3', 'Prova Final - Algoritmos e Estruturas', 'Algoritmos', '12/12/2025'),
-            ('4', 'Avaliação Substitutiva', 'Linguagem de Programação', '18/12/2025'),
+        frequencia_exemplo = [
+            ('1', 'Gabriel Liesenberg Massari', 'H7703G3', 'Engenharia de Software I', '13/11/2025', 'Presente'),
+            ('2', 'João Pedro Caetano', 'R8975J5', 'Engenharia de Software I', '13/11/2025', 'Presente'),
+            ('3', 'Gustavo Henrique dos S Moreira', 'H775590', 'Engenharia de Software I', '13/11/2025', 'Falta'),
+            ('4', 'Gabriel Liesenberg Massari', 'H7703G3', 'Banco de Dados', '14/11/2025', 'Presente'),
         ]
-        # Insere as provas na grade apenas se o ID não estiver no conjunto de excluídos
-        for prova in provas_exemplo:
-            if prova[0] not in self.itens_excluidos:
-                self.tree.insert('', tk.END, values=prova)
+        for registro in frequencia_exemplo:
+            if registro[0] not in self.itens_excluidos:
+                self.tree.insert('', tk.END, values=registro)
 
     def _ordenar_coluna(self, col):
-        """Ordena a treeview pela coluna especificada."""
         reverse = self._sort_state.get(col, False)
         self._sort_state[col] = not reverse
 
-        for c in self.tree['columns']:
-            self.tree.heading(c, image='')
+        for c in self.tree['columns']: self.tree.heading(c, image='')
 
         data = [(self.tree.set(item, col), item) for item in self.tree.get_children('')]
+        try: data.sort(key=lambda t: float(t[0]), reverse=reverse)
+        except ValueError: data.sort(key=lambda t: t[0], reverse=reverse)
 
-        try:
-            data.sort(key=lambda t: float(t[0]), reverse=reverse)
-        except ValueError:
-            data.sort(key=lambda t: t[0], reverse=reverse)
-
-        for index, (val, item) in enumerate(data):
-            self.tree.move(item, '', index)
+        for index, (val, item) in enumerate(data): self.tree.move(item, '', index)
 
         icon = self.sort_desc_icon if reverse else self.sort_asc_icon
         self.tree.heading(col, image=icon)
 
-        for c in self._sort_state:
-            self._sort_state[c] = False if c != col else self._sort_state[c]
+        for c in self._sort_state: self._sort_state[c] = False if c != col else self._sort_state[c]
