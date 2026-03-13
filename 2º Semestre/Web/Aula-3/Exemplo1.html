@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cadastro</title>
+    <style>
+        body {
+
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            background-image: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .campo-texto {
+            width: 100%;
+            padding: 10px;
+            margin-bottom:15px;
+            border: 1px solid #ccc;
+            border-radius: 5px
+        }
+
+        .botao {
+            width: 100%
+            padding: 12px;
+            background: #007bff;
+            color; #fff;
+            border: nome;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .botao:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulário de Cadastro</h1>
+        <form>
+            <div>
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" name="nome"
+    class="campo_texto" required />
+            </div>
+            <div>
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email"
+    class="campo-texto"required />                
+            </div>
+            <div>
+                <input type=""submit" value="Cadastrar" class="botao" />
+    />
+            </div>
+        </form>
+    </div>
+
+    <script>
+         // Este script escuta o momento que você clica no botão "Cadastrar"
+        document.getElementById('meuForm').onsubmit = function(event) {
+            event.preventDefault(); // Impede a página de recarregar
+
+            // Pega os valores digitados
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+
+            // Exibe a mensagem na tela
+            alert("Cadastro realizado com sucesso!\n\nNome: " + nome + "\nE-mail: " + email);
+            
+            // Limpa os campos após o alerta
+            this.reset();
+        };
+    </script>
+</body>
+</html>
