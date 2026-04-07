@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Script - Exemplo 1</title>
+    <style>
+        body{
+            font-family: 'Segoe UI', sans-serif;
+            padding: 30px;
+            background-color: gainsboro;
+        }
+        h1{
+            color: #2c3e50;
+        }
+        .card{
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px px rgba(0, 0, 0, 0.1);
+        }
+        button{
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16opx;
+        }
+        button:hover{
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Laboratório de JavaScript - ADS
+    </h1>
+    <div class="card">
+        <h3>
+            1. Conversor de Temperatura
+        </h3>
+        <p> Converte Celsius para Fahrenheit.</p>
+        <button onclick="convertCelsius()"> Executar </button>
+    </div>
+
+    <script>
+        function convertCelsius(){
+            let c = prompt("Digite a temperatura em Celsius: ");
+            let f = (parseFloat(c) * 1.8) + 32;
+            alert(`${c}°C é igual a ${f.toFixed(1)}°F`) 
+        }
+    </script>
+</body>
+</html>
