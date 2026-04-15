@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metalúrgica Tech - Chatbot v2</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #dfe6e9; display: flex; justify-content: center; align-items: center; height: 100vh; }
+
+        #chat-container { width: 400px; height: 550px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Header */
+        #chat-header { background: #2c3e50; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #f39c12; }A
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .logo-box { width: 35px; height: 35px; background: #f39c12; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 12px; }
+        #clock { font-family: monospace; font-size: 13px; opacity: 0.8; }
+
+        /* Janela */
+        #chat-window { flex: 1; padding: 20px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 14px; border-radius: 15px; font-size: 14px; max-width: 80%; word-wrap: break-word; }
+        .user { background: #3498db; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .bot { background: #ecf0f1; color: #2c3e50; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #bdc3c7; }
+
+        /* Controles */
+        #input-area { display: flex; padding: 15px; background: #fff; border-top: 1px solid #eee; }
+        #user-input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
+        #send-btn { background: #27ae60; color: white; border: none; padding: 0 15px; margin-left: 8px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        #send-btn:hover { background: #219150; }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="chat-header">
+        <div class="brand">
+            <div class="logo-box">MT</div>
+            <span>AdminBot</span>
+        </div>
+        <div id="clock">00:00</div>
+    </div>
+
+    <div id="chat-window">
+        <div class="msg bot">Olá! Sou o assistente da ADMIN Tech. Como posso ajudar?</div>
+    </div>
+
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="Pergunte sobre 'orçamento'..." autocomplete="off">
+        <button id="send-btn">Enviar</button>
+    </div>
+</div>
+
+<script>
+    // 1. Relógio
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // 2. Banco de Dados (15+ Respostas)
+    const brain = [
+        { key: "bom dia", resp: "Bom dia! Em que a Admin Tech pode ser útil?" },
+        { key: "boa tarde", resp: "Boa tarde! Como podemos ajudar em seu projeto hoje?" },
+        { key: "nome", resp: "Meu nome é MetalBot, o consultor virtual da Metalúrgica Tech." },
+        { key: "orcamento", resp: "Envie seu desenho para vendas@metalurgicatech.com.br para um orçamento." },
+        { key: "prazo", resp: "Nosso prazo de fabricação é de 15 a 20 dias úteis." },
+        { key: "laser", resp: "Cortamos chapas de até 20mm com tecnologia laser de fibra." },
+        { key: "dobra", resp: "Temos dobradeiras CNC para peças de até 3 metros." },
+        { key: "solda", resp: "Trabalhamos com processos MIG e TIG certificados." },
+        { key: "materiais", resp: "Processamos Aço Carbono, Inox e Alumínio." },
+        { key: "entrega", resp: "Entregamos via transportadora em todo o Brasil." },
+        { key: "endereco", resp: "Rua Industrial, 500. Venha tomar um café conosco!" },
+        { key: "contato", resp: "Ligue para (11) 4002-8922 ou chame no WhatsApp." },
+        { key: "horario", resp: "Atendemos de segunda a sexta, das 07:30 às 17:30." },
+        { key: "pintura", resp: "Oferecemos pintura eletrostática a pó em várias cores." },
+        { key: "vagas", resp: "Cadastre seu currículo no e-mail: rh@metalurgicatech.com.br." },
+        { key: "usinagem", resp: "Sim, realizamos serviços de usinagem em centros CNC." }
+    ];
+
+    const windowChat = document.getElementById('chat-window');
+    const inputField = document.getElementById('user-input');
+    const button = document.getElementById('send-btn');
+
+    function sendMessage() {
+        const text = inputField.value.trim();
+        if (text === "") return;
+
+        // Mensagem do Usuário
+        appendMsg(text, 'user');
+        inputField.value = "";
+
+        // Efeito de carregamento (evita o "travamento" visual)
+        const loading = document.createElement('div');
+        loading.className = 'msg bot';
+        loading.innerText = "...";
+        windowChat.appendChild(loading);
+        windowChat.scrollTop = windowChat.scrollHeight;
+
+        setTimeout(() => {
+            windowChat.removeChild(loading);
+            const response = findResponse(text);
+            appendMsg(response, 'bot');
+        }, 600);
+    }
+
+    function findResponse(userInput) {
+        const cleanInput = userInput.toLowerCase();
+        // Tenta achar a chave no banco de dados
+        const match = brain.find(item => cleanInput.includes(item.key));
+        return match ? match.resp : "Desculpe, não entendi. Tente termos como: orçamento, prazo ou materiais.";
+    }
+
+    function appendMsg(text, side) {
+        const div = document.createElement('div');
+        div.className = `msg ${side}`;
+        div.innerText = text;
+        windowChat.appendChild(div);
+        windowChat.scrollTop = windowChat.scrollHeight;
+    }
+
+    // Eventos
+    button.onclick = sendMessage;
+    inputField.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+</script>
+
+</body>
+</html>
