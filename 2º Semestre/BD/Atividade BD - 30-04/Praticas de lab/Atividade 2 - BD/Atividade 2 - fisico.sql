@@ -31,10 +31,8 @@ ALTER TABLE Exame ADD CONSTRAINT FK_Exame_3
     FOREIGN KEY (fk_Medico_Id)
     REFERENCES Medico (Id);
 
-    -- ================================================
---  INSERTS
 -- ================================================
-
+--  INSERTS
 -- Medico
 INSERT INTO Medico (Id, Nome, Especialidade) VALUES
 (1, 'Dr. Carlos Mendes',     'Cardiologia'),
@@ -67,8 +65,6 @@ INSERT INTO Exame (Id, Tipo, Aceita_Convenio, Requisitos, Valor_Exame, fk_Pacien
 
 -- ================================================
 --  SELECTS
--- ================================================
-
 -- 1. Todos os médicos e suas especialidades
 SELECT Id, Nome, Especialidade
 FROM Medico
