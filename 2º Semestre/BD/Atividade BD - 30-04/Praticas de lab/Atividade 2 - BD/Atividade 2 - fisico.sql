@@ -65,100 +65,51 @@ INSERT INTO Exame (Id, Tipo, Aceita_Convenio, Requisitos, Valor_Exame, fk_Pacien
 
 -- ================================================
 --  SELECTS
--- 1. Todos os médicos e suas especialidades
-SELECT Id, Nome, Especialidade
-FROM Medico
-ORDER BY Nome;
+-- Listar todos os exames e seus respectivos pacientes
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id;
 
--- 2. Todos os pacientes cadastrados
-SELECT Id, Nome, Endereco
-FROM Paciente
-ORDER BY Nome;
+-- Listar todos os exames e o médico responsável
+SELECT medico.nome 'Nome do Médico', medico.especialidade 'Especialidade', exame.tipo 'Tipo do Exame'
+  FROM medico
+ INNER JOIN exame
+    ON medico.id = exame.fk_Medico_Id;
 
--- 3. Todos os exames com paciente e médico responsável
-SELECT
-    e.Id          AS ExameId,
-    e.Tipo        AS Exame,
-    p.Nome        AS Paciente,
-    m.Nome        AS Medico,
-    m.Especialidade,
-    e.Aceita_Convenio,
-    e.Valor_Exame
-FROM Exame e
-JOIN Paciente p ON e.fk_Paciente_Id = p.Id
-JOIN Medico   m ON e.fk_Medico_Id   = m.Id
-ORDER BY e.Id;
+-- Relatório geral: Paciente -> Exame -> Médico
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame', medico.nome 'Nome do Médico', medico.especialidade 'Especialidade'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ INNER JOIN medico
+    ON exame.fk_Medico_Id = medico.id;
 
--- 4. Exames que aceitam convênio
-SELECT
-    e.Tipo        AS Exame,
-    e.Valor_Exame,
-    p.Nome        AS Paciente
-FROM Exame e
-JOIN Paciente p ON e.fk_Paciente_Id = p.Id
-WHERE e.Aceita_Convenio = TRUE
-ORDER BY e.Valor_Exame;
+-- Listar exames de um médico específico (pela especialidade)
+SELECT medico.nome 'Nome do Médico', exame.tipo 'Tipo do Exame', paciente.nome 'Nome do Paciente'
+  FROM medico
+ INNER JOIN exame
+    ON medico.id = exame.fk_Medico_Id
+ INNER JOIN paciente
+    ON exame.fk_Paciente_Id = paciente.id
+ WHERE medico.especialidade = 'Cardiologia';
 
--- 5. Exames mais caros que R$ 200,00
-SELECT
-    e.Tipo        AS Exame,
-    e.Valor_Exame,
-    p.Nome        AS Paciente,
-    m.Nome        AS Medico
-FROM Exame e
-JOIN Paciente p ON e.fk_Paciente_Id = p.Id
-JOIN Medico   m ON e.fk_Medico_Id   = m.Id
-WHERE e.Valor_Exame > 200.00
-ORDER BY e.Valor_Exame DESC;
+-- Listar todos os médicos e seus exames (mesmo os que não têm exames)
+SELECT medico.nome 'Nome do Médico', medico.especialidade 'Especialidade', exame.tipo 'Tipo do Exame'
+  FROM medico
+  LEFT JOIN exame
+    ON medico.id = exame.fk_Medico_Id;
 
--- 6. Quantidade de exames por médico
-SELECT
-    m.Nome        AS Medico,
-    m.Especialidade,
-    COUNT(e.Id)   AS Total_Exames
-FROM Medico m
-LEFT JOIN Exame e ON e.fk_Medico_Id = m.Id
-GROUP BY m.Id, m.Nome, m.Especialidade
-ORDER BY Total_Exames DESC;
+-- Listar apenas os exames que aceitam convênio
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ WHERE exame.aceita_convenio = TRUE;
 
--- 7. Valor médio, mínimo e máximo dos exames por médico
-SELECT
-    m.Nome          AS Medico,
-    ROUND(AVG(e.Valor_Exame), 2) AS Valor_Medio,
-    MIN(e.Valor_Exame)           AS Valor_Minimo,
-    MAX(e.Valor_Exame)           AS Valor_Maximo
-FROM Medico m
-JOIN Exame e ON e.fk_Medico_Id = m.Id
-GROUP BY m.Id, m.Nome
-ORDER BY Valor_Medio DESC;
-
--- 8. Pacientes que têm mais de 1 exame
-SELECT
-    p.Nome        AS Paciente,
-    COUNT(e.Id)   AS Total_Exames
-FROM Paciente p
-JOIN Exame e ON e.fk_Paciente_Id = p.Id
-GROUP BY p.Id, p.Nome
-HAVING COUNT(e.Id) > 1
-ORDER BY Total_Exames DESC;
-
--- 9. Exames com requisito de jejum
-SELECT
-    e.Tipo        AS Exame,
-    e.Requisitos,
-    e.Valor_Exame,
-    p.Nome        AS Paciente
-FROM Exame e
-JOIN Paciente p ON e.fk_Paciente_Id = p.Id
-WHERE e.Requisitos LIKE '%jejum%' OR e.Requisitos LIKE '%Jejum%'
-ORDER BY e.Tipo;
-
--- 10. Receita total gerada por cada médico
-SELECT
-    m.Nome              AS Medico,
-    m.Especialidade,
-    SUM(e.Valor_Exame)  AS Receita_Total
-FROM Medico m
-JOIN Exame e ON e.fk_Medico_Id = m.Id
-GROUP BY m.Id, m.Nome, m.Especialidade
-ORDER BY Receita_Total DESC;
+-- Listar exames de um paciente específico (pelo nome)
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame', exame.requisitos 'Requisitos'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ WHERE paciente.nome = 'Ana Paula Souza';
