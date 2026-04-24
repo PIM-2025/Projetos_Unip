@@ -1,3 +1,4 @@
+CREATE DATABASE seguradora;
 USE seguradora;
 
 CREATE TABLE Cliente (
@@ -79,33 +80,51 @@ INSERT INTO Acidentes (Id, Data, Hora, Local, fk_Carro_Id) VALUES
 (5, '2024-04-18', '22:30:00', 'Contorno, Belo Horizonte - MG', 5),
 (6, '2024-07-30', '11:00:00', 'Av. Ipiranga, São Paulo - SP', 1);
 
+-- Listar todos os exames e seus respectivos pacientes
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id;
 
-SELECT cliente.nome 'Nome do Cliente', apolice.numero 'Número do Apólice'
-  FROM cliente 
- INNER JOIN apolice 
-    ON cliente.id = apolice.fk_Cliente_Id;
-    
-SELECT cliente.nome 'Nome do Cliente', apolice.numero 'Número do Apólice', carro.registro 'Registro do carro', carro.marca 'Marca do carro' 
-  FROM cliente
- INNER JOIN apolice
-	ON cliente.id = apolice.fk_Cliente_Id
- INNER JOIN carro
-	ON apolice.fk_Cliente_Id = carro.id;
-    
-SELECT *
-  FROM carro
- INNER JOIN acidentes
-	ON carro.id = acidentes.fk_Carro_Id
- WHERE carro.marca = 'Toyota';
- 
- SELECT *
-   FROM carro
-   LEFT JOIN acidentes
-     ON carro.id = acidentes.fk_Carro_Id;
- 
- SELECT cliente.nome 'Nome do Cliente', apolice.numero 'Número do Apólice', apolice.valor 'Valor da Apólice', carro.registro 'Registro do carro', carro.marca 'Marca do carro' 
-  FROM cliente
- INNER JOIN apolice
-	ON cliente.id = apolice.fk_Cliente_Id
- INNER JOIN carro
-	ON apolice.fk_Cliente_Id = carro.id;
+-- Listar todos os exames e o médico responsável
+SELECT medico.nome 'Nome do Médico', medico.especialidade 'Especialidade', exame.tipo 'Tipo do Exame'
+  FROM medico
+ INNER JOIN exame
+    ON medico.id = exame.fk_Medico_Id;
+
+-- Relatório geral: Paciente -> Exame -> Médico
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame', medico.nome 'Nome do Médico', medico.especialidade 'Especialidade'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ INNER JOIN medico
+    ON exame.fk_Medico_Id = medico.id;
+
+-- Listar exames de um médico específico (pela especialidade)
+SELECT medico.nome 'Nome do Médico', exame.tipo 'Tipo do Exame', paciente.nome 'Nome do Paciente'
+  FROM medico
+ INNER JOIN exame
+    ON medico.id = exame.fk_Medico_Id
+ INNER JOIN paciente
+    ON exame.fk_Paciente_Id = paciente.id
+ WHERE medico.especialidade = 'Cardiologia';
+
+-- Listar todos os médicos e seus exames (mesmo os que não têm exames)
+SELECT medico.nome 'Nome do Médico', medico.especialidade 'Especialidade', exame.tipo 'Tipo do Exame'
+  FROM medico
+  LEFT JOIN exame
+    ON medico.id = exame.fk_Medico_Id;
+
+-- Listar apenas os exames que aceitam convênio
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ WHERE exame.aceita_convenio = TRUE;
+
+-- Listar exames de um paciente específico (pelo nome)
+SELECT paciente.nome 'Nome do Paciente', exame.tipo 'Tipo do Exame', exame.valor_exame 'Valor do Exame', exame.requisitos 'Requisitos'
+  FROM paciente
+ INNER JOIN exame
+    ON paciente.id = exame.fk_Paciente_Id
+ WHERE paciente.nome = 'Ana Paula Souza';
