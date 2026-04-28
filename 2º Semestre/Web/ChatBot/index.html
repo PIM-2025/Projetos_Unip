@@ -654,7 +654,14 @@ print(somar(3, 4))  # 7`,
         {
             keys: ["git", "commit", "branch", "merge", "rebase", "github"],
             text: "Git — controla versões do código e facilita o trabalho em equipe.\nComandos básicos do dia a dia:",
-            code: `# Ver o estado atual do projeto
+            code: ` # Configuração inicial (apenas na primeira vez)
+git config --global user.name "Seu Nome"
+git config --global user.email "Seu Email"
+
+# Iniciar um repositório
+git init
+
+# Ver o estado atual do projeto
 git status
 
 # Registrar alterações (commit)
