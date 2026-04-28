@@ -520,94 +520,119 @@
         },
         {
             keys: ["javascript", " js ", "js,", "var ", "const ", "let "],
-            text: "JavaScript é a linguagem da web — roda no browser e no servidor (Node.js).\nAlguns fundamentos essenciais:",
-            code: `// Variáveis modernas
-const nome = "Dev";       // imutável
-let   count = 0;          // mutável
+            text: "JavaScript é a linguagem da web — roda no browser e no servidor (Node.js).\nVeja os fundamentos básicos:",
+            code: `// Declaração de variáveis
+var   nome  = "Dev";      // escopo global (evite)
+let   idade = 20;         // mutável, escopo de bloco
+const PI    = 3.14;       // imutável (constante)
 
-// Arrow function + template literal
-const saudar = (n) => \`Olá, \${n}!\`;
+// Condicional if / else
+if (idade >= 18) {
+    console.log("Maior de idade");
+} else {
+    console.log("Menor de idade");
+}
 
-// Desestruturação
-const { id, email } = usuario;
-const [primeiro, ...resto] = lista;
+// Laço for
+for (let i = 0; i < 5; i++) {
+    console.log("Número:", i);
+}
 
-// Optional chaining (evita erros de undefined)
-const cidade = usuario?.endereco?.cidade ?? "N/A";`,
+// Função básica
+function somar(a, b) {
+    return a + b;
+}
+console.log(somar(3, 4)); // 7
+
+// Arrow function (forma moderna)
+const multiplicar = (a, b) => a * b;`,
             lang: "javascript"
         },
         {
             keys: ["python"],
-            text: "Python é elegante, legível e poderoso — muito usado em IA, automação e backend.",
-            code: `# List comprehension
-quadrados = [x**2 for x in range(10) if x % 2 == 0]
+            text: "Python é fácil de aprender e muito poderoso — usado em IA, automação e backend.\nVeja os fundamentos básicos:",
+            code: `# Variáveis (sem declaração de tipo)
+nome  = "Dev"
+idade = 20
+pi    = 3.14
 
-# Dataclass (tipo seguro)
-from dataclasses import dataclass
+# Condicional if / elif / else
+if idade >= 18:
+    print("Maior de idade")
+elif idade == 17:
+    print("Quase lá!")
+else:
+    print("Menor de idade")
 
-@dataclass
-class Usuario:
-    nome: str
-    email: str
-    ativo: bool = True
+# Laço for
+for i in range(5):
+    print("Número:", i)
 
-# Context manager
-with open("arquivo.txt") as f:
-    conteudo = f.read()
+# Laço while
+contador = 0
+while contador < 3:
+    print(contador)
+    contador += 1
 
-# f-string moderno
-print(f"Nome: {usuario.nome!r}")`,
+# Função básica
+def somar(a, b):
+    return a + b
+
+print(somar(3, 4))  # 7`,
             lang: "python"
         },
         {
             keys: ["git", "commit", "branch", "merge", "rebase", "github"],
-            text: "Git — sistema de controle de versão essencial para todo dev.",
-            code: `# Fluxo básico diário
-git status                    # ver o que mudou
-git add src/arquivo.js        # stage específico
-git commit -m "feat: ..."     # convencional commits
+            text: "Git — controla versões do código e facilita o trabalho em equipe.\nComandos básicos do dia a dia:",
+            code: `# Ver o estado atual do projeto
+git status
+
+# Registrar alterações (commit)
+git add arquivo.js            # adicionar arquivo
+git add .                     # adicionar tudo
+git commit -m "mensagem"      # salvar com mensagem
+
+# Enviar e receber do repositório remoto
 git push origin main          # enviar
+git pull origin main          # receber
 
-# Branches
-git checkout -b feature/login # criar e mudar
-git merge feature/login       # integrar
-git branch -d feature/login   # apagar
+# Branches (ramificações)
+git branch                    # listar branches
+git checkout -b nova-feature  # criar e mudar de branch
+git merge nova-feature        # unir branch ao main
 
-# Desfazer com segurança
+# Desfazer
 git restore arquivo.js        # descarta alteração local
-git revert HEAD               # cria commit de reversão
-
-# Log visual
-git log --oneline --graph --all`,
+git log --oneline             # ver histórico de commits`,
             lang: "bash"
         },
         {
             keys: ["css", "estilo", "flexbox", "grid", "layout", "responsivo"],
-            text: "CSS moderno — Flexbox e Grid resolvem 90% dos layouts.",
-            code: `/* Centralizar qualquer coisa */
+            text: "CSS — linguagem para estilizar páginas web.\nDo básico ao Flexbox:",
+            code: `/* Seletores básicos */
+h1          { color: blue; }          /* por tag    */
+.destaque   { font-weight: bold; }    /* por classe */
+#titulo     { font-size: 24px; }      /* por id     */
+
+/* Box model — espaçamento */
+.caixa {
+    margin:  16px;           /* espaço externo */
+    padding: 12px;           /* espaço interno */
+    border:  1px solid #ccc;
+    width:   300px;
+}
+
+/* Centralizar com Flexbox */
 .centro {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display:         flex;
+    justify-content: center; /* eixo horizontal */
+    align-items:     center; /* eixo vertical   */
 }
 
-/* Grid responsivo sem media query */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-}
-
-/* Custom properties (variáveis CSS) */
+/* Variáveis CSS */
 :root {
-    --primary: #58a6ff;
-    --radius:  8px;
-}
-
-/* Animação de entrada */
-@keyframes fade-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    --cor-principal: #58a6ff;
+    --espacamento:   16px;
 }`,
             lang: "css"
         },
@@ -642,7 +667,32 @@ await fetch("/api/usuarios", {
         },
         {
             keys: ["debug", "erro", "bug", "error", "problema", "fix", "console"],
-            text: "Debugging — como encontrar e corrigir bugs eficientemente:\n\n• `console.log()` para valores simples\n• `console.table()` para arrays e objetos\n• `console.group()` para agrupar logs\n• Breakpoints no DevTools (F12) — mais poderoso que logs\n• Leia o stack trace de baixo para cima\n• Isole o problema: remova código até o bug desaparecer\n• Rubber Duck Debugging: explique o código em voz alta\n• Verifique o tipo das variáveis com `typeof` ou `console.log(typeof x)`"
+            text: "Debug — como encontrar e corrigir erros no código:\n\n• `console.log()` para ver valores em tempo real\n• `console.table()` para arrays e objetos\n• Breakpoints no DevTools (F12) — pausa a execução\n• Leia o stack trace: indica o arquivo e a linha do erro\n• Isole o problema: comente o código até o bug sumir\n• Use `typeof x` para ver o tipo de uma variável",
+            code: `// Inspecionar valores
+let x = 42;
+console.log("x =", x);          // x = 42
+console.log(typeof x);           // "number"
+
+// Visualizar array ou objeto
+const frutas = ["maçã", "banana", "uva"];
+console.table(frutas);
+
+// Capturar erros com try/catch
+try {
+    let resultado = JSON.parse("texto inválido");
+} catch (erro) {
+    console.error("Erro:", erro.message);
+}
+
+// Verificar tipo antes de usar
+function dobrar(n) {
+    if (typeof n !== "number") {
+        console.warn("Esperado um número, recebeu:", typeof n);
+        return;
+    }
+    return n * 2;
+}`,
+            lang: "javascript"
         },
         {
             keys: ["node", "nodejs", "node.js", "npm", "express", "servidor"],
@@ -674,56 +724,61 @@ app.listen(3000, () => console.log("Servidor em :3000"));`,
         },
         {
             keys: ["sql", "banco", "database", "mysql", "postgres", "sqlite", "query", "select", "insert"],
-            text: "SQL — consultas fundamentais para qualquer back-end:",
-            code: `-- Criar tabela com boas práticas
-CREATE TABLE usuarios (
-    id         SERIAL PRIMARY KEY,
-    nome       VARCHAR(100) NOT NULL,
-    email      VARCHAR(150) UNIQUE NOT NULL,
-    criado_em  TIMESTAMP DEFAULT NOW()
+            text: "SQL — linguagem para criar e manipular bancos de dados.\nOs 4 comandos essenciais (CRUD):",
+            code: `-- Criar tabela
+CREATE TABLE alunos (
+    id    INT PRIMARY KEY AUTO_INCREMENT,
+    nome  VARCHAR(100) NOT NULL,
+    nota  DECIMAL(4,2)
 );
 
--- Inserir
-INSERT INTO usuarios (nome, email)
-VALUES ('Ana', 'ana@email.com');
+-- Inserir dados (Create)
+INSERT INTO alunos (nome, nota)
+VALUES ('Ana', 9.5), ('João', 7.0);
 
--- Consulta com JOIN
-SELECT u.nome, COUNT(p.id) AS total_posts
-FROM usuarios u
-LEFT JOIN posts p ON p.user_id = u.id
-WHERE u.ativo = true
-GROUP BY u.id
-ORDER BY total_posts DESC
-LIMIT 10;`,
+-- Consultar dados (Read)
+SELECT * FROM alunos;
+SELECT nome, nota FROM alunos WHERE nota >= 7;
+
+-- Atualizar dados (Update)
+UPDATE alunos SET nota = 8.0 WHERE nome = 'João';
+
+-- Remover dados (Delete)
+DELETE FROM alunos WHERE id = 1;`,
             lang: "sql"
         },
         {
             keys: ["typescript", "ts", "tipagem", "type", "interface", "generics"],
-            text: "TypeScript — JavaScript com tipos estáticos (menos bugs em prod):",
-            code: `// Interface + tipo utilitário
+            text: "TypeScript adiciona tipos ao JavaScript, ajudando a pegar erros antes de rodar o código:",
+            code: `// Tipos básicos
+let nome:   string  = "Dev";
+let idade:  number  = 20;
+let ativo:  boolean = true;
+
+// Array tipado
+let notas: number[] = [9, 7, 8.5];
+
+// Condicional com tipo
+if (idade >= 18) {
+    console.log("Maior de idade");
+} else {
+    console.log("Menor de idade");
+}
+
+// Interface — define a forma de um objeto
 interface Usuario {
-    id:      number;
-    nome:    string;
-    email?:  string;   // opcional
-    role:    "admin" | "user"; // union type
+    nome:   string;
+    idade:  number;
+    email?: string; // ? = opcional
 }
 
-// Partial — todos campos opcionais
-type AtualizarUsuario = Partial<Usuario>;
-
-// Generic — reutilizável
-async function buscar<T>(url: string): Promise<T> {
-    const res = await fetch(url);
-    return res.json() as T;
+// Função com tipos definidos
+function saudar(usuario: Usuario): string {
+    return \`Olá, \${usuario.nome}!\`;
 }
 
-// Enum
-enum Status { ATIVO = "active", INATIVO = "inactive" }
-
-// Type guard
-function isAdmin(u: Usuario): boolean {
-    return u.role === "admin";
-}`,
+const dev: Usuario = { nome: "Ana", idade: 25 };
+console.log(saudar(dev)); // "Olá, Ana!"`,
             lang: "typescript"
         },
         {
@@ -838,33 +893,22 @@ const ordenados = [...devs].sort((a, b) => b.salario - a.salario);`,
         },
         {
             keys: ["docker", "container", "compose", "dockerfile", "imagem", "image"],
-            text: "Docker — containers para aplicações reproduzíveis:",
-            code: `# Dockerfile otimizado (Node.js)
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
+            text: "Docker empacota sua aplicação em containers — roda igual em qualquer máquina.\nDockerfile e comandos básicos:",
+            code: `# Dockerfile básico (Node.js)
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm install
 COPY . .
 EXPOSE 3000
-USER node
 CMD ["node", "server.js"]
 
-# docker-compose.yml
-services:
-  api:
-    build: .
-    ports: ["3000:3000"]
-    environment:
-      DATABASE_URL: postgres://user:pass@db:5432/mydb
-  db:
-    image: postgres:16-alpine
-    volumes: [pgdata:/var/lib/postgresql/data]
-volumes:
-  pgdata:`,
+# Comandos essenciais
+docker build -t minha-app .        # criar imagem
+docker run -p 3000:3000 minha-app  # rodar container
+docker ps                          # listar containers ativos
+docker stop <id>                   # parar container
+docker images                      # listar imagens`,
             lang: "dockerfile"
         },
         {
@@ -3533,7 +3577,7 @@ function renderizarUsuario(el) { /*...*/ }`,
                 if (match.code) addCodeBlock(match.code, match.lang);
             } else {
                 addMsg(
-                    "Hmm, nao encontrei uma resposta especifica para isso.\n\nTente perguntar sobre: JavaScript, Python, Git, CSS, API, TypeScript, SQL, Node.js, React, Docker, Debug, Regex, POO, Arrays ou Carreira!",
+                "Hmm, não encontrei uma resposta específica para isso.\n\nTente perguntar sobre: JavaScript, Python, Git, CSS, API, TypeScript, SQL, Node.js, React, Docker, Debug, Regex, POO, Arrays ou Carreira!",
                     "bot"
                 );
             }
@@ -3568,7 +3612,7 @@ function renderizarUsuario(el) { /*...*/ }`,
     // ════════════════════════════════════════════════════════════
     function init() {
         addMsg(
-            "Ola, dev! Sou o ByteBot, seu assistente de programacao.\nClique nos chips abaixo para tópicos rápidos, ou me pergunte sobre qualquer tecnologia!",
+            "Olá, dev! Sou o ByteBot, seu assistente de programação.\nClique nos botões abaixo para tópicos rápidos, ou me pergunte sobre qualquer tecnologia!",
             "bot"
         );
     }
