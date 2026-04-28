@@ -27,7 +27,6 @@
 
         body {
             background: var(--bg);
-            /* grade sutil no fundo — feel de IDE */
             background-image:
                 linear-gradient(rgba(88,166,255,.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(88,166,255,.03) 1px, transparent 1px);
@@ -272,7 +271,7 @@
         .code-block pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         .code-block pre::-webkit-scrollbar-corner { background: transparent; }
 
-        /* ── Syntax Highlighting (mini, sem biblioteca) ── */
+        /* ── Syntax Highlighting) ── */
         .hl-kw   { color: #ff7b72; }                    /* keywords       */
         .hl-str  { color: #a5d6ff; }                    /* strings        */
         .hl-num  { color: #79c0ff; }                    /* números        */
@@ -390,6 +389,68 @@
         }
         #send-btn:hover  { background: #79b8ff; transform: scale(1.06); }
         #send-btn:active { transform: scale(.94); }
+
+        /* ═══════════════════════════════════════
+           MASCOTE INTERATIVO
+           ═══════════════════════════════════════ */
+        #mascote-wrap {
+            position: relative;
+            flex-shrink: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        #mascote-wrap svg { display: block; transition: filter .3s; }
+        #mascote-wrap:hover svg {
+            filter: drop-shadow(0 0 8px rgba(88,166,255,.55));
+        }
+
+        @keyframes mascote-bounce {
+            0%,100% { transform: translateY(0) rotate(0deg); }
+            25%      { transform: translateY(-9px) rotate(-5deg); }
+            65%      { transform: translateY(-4px) rotate(4deg); }
+        }
+        #mascote-wrap.bouncing { animation: mascote-bounce .5s ease; }
+
+        /* Balão de pensamento (fixed — não sofre clip do #app) */
+        #thought-bubble {
+            position: fixed;
+            background: var(--surface2);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            padding: 6px 11px;
+            font-size: 13px;
+            color: var(--text);
+            font-family: 'Consolas', monospace;
+            max-width: 210px;
+            text-align: center;
+            line-height: 1.5;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 14px rgba(88,166,255,.18);
+            opacity: 0;
+            transition: opacity .25s ease, transform .25s ease;
+        }
+        /* triângulo aponta para baixo (em direção ao mascote) */
+        #thought-bubble::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--primary);
+        }
+        #thought-bubble::before {
+            content: "";
+            position: absolute;
+            top: calc(100% - 1px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--surface2);
+            z-index: 1;
+        }
+        #thought-bubble.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -403,10 +464,9 @@
 
         <!--
             MASCOTE: ByteBot
-            Robô caricato de programação — cabeça grande (monitor),
-            olhos pixelados que piscam, boca com "</>" e antena LED.
         -->
-        <svg viewBox="0 0 52 66" width="46" height="58" xmlns="http://www.w3.org/2000/svg" aria-label="ByteBot mascote">
+        <div id="mascote-wrap" title="Clique em mim!">
+        <svg id="bytebot" viewBox="0 0 52 66" width="46" height="58" xmlns="http://www.w3.org/2000/svg" aria-label="ByteBot mascote">
 
             <!-- Antena -->
             <line x1="26" y1="3" x2="26" y2="13" stroke="#30363d" stroke-width="2" stroke-linecap="round"/>
@@ -419,17 +479,16 @@
             <!-- Tela interna do monitor -->
             <rect x="8"  y="17" width="36" height="23" rx="4" fill="#161b22"/>
 
-            <!-- Olho esquerdo — pixelado -->
-            <rect class="eye"       x="11" y="21" width="8" height="7" rx="1.5" fill="#58a6ff"/>
-            <!-- Reflexo do olho -->
-            <rect x="12" y="22" width="2" height="2" rx=".5" fill="rgba(255,255,255,.5)"/>
+            <!-- Olho esquerdo -->
+            <rect id="eye-left"    class="eye"       x="11" y="21" width="8" height="7" rx="1.5" fill="#58a6ff"/>
+            <rect id="eye-ref-l"   x="12" y="22" width="2" height="2" rx=".5" fill="rgba(255,255,255,.5)"/>
 
             <!-- Olho direito -->
-            <rect class="eye delay" x="33" y="21" width="8" height="7" rx="1.5" fill="#58a6ff"/>
-            <rect x="34" y="22" width="2" height="2" rx=".5" fill="rgba(255,255,255,.5)"/>
+            <rect id="eye-right"   class="eye delay" x="33" y="21" width="8" height="7" rx="1.5" fill="#58a6ff"/>
+            <rect id="eye-ref-r"   x="34" y="22" width="2" height="2" rx=".5" fill="rgba(255,255,255,.5)"/>
 
             <!-- Boca: símbolo de código </> -->
-            <text x="26" y="36.5" text-anchor="middle" fill="#3fb950"
+            <text id="bot-mouth" x="26" y="36.5" text-anchor="middle" fill="#3fb950"
                   font-family="'Consolas', monospace" font-size="9" font-weight="bold">&lt;/&gt;</text>
 
             <!-- Pescoço -->
@@ -444,19 +503,19 @@
 
             <!-- Braço esquerdo -->
             <rect x="0" y="52" width="8" height="6" rx="3" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
-            <!-- Mão/punho esquerdo -->
             <circle cx="1.5" cy="55" r="1.5" fill="#30363d"/>
 
             <!-- Braço direito -->
             <rect x="44" y="52" width="8" height="6" rx="3" fill="#21262d" stroke="#30363d" stroke-width="1.5"/>
             <circle cx="50.5" cy="55" r="1.5" fill="#30363d"/>
         </svg>
+        </div>
 
         <div class="header-info">
             <h1>DevAssist</h1>
             <div class="status">
                 <span class="status-dot"></span>
-                <span>ByteBot &middot; online</span>
+                <span>ByteBot &middot; Online</span>
             </div>
         </div>
 
@@ -484,6 +543,9 @@
         <span class="chip" onclick="quickAsk('docker')">Docker</span>
         <span class="chip" onclick="quickAsk('carreira dev')">Carreira</span>
     </div>
+
+    <!-- balão de pensamento do mascote (position: fixed via JS) -->
+    <div id="thought-bubble"></div>
 
     <!-- ══════════════════════════════════════
          INPUT
@@ -638,31 +700,28 @@ h1          { color: blue; }          /* por tag    */
         },
         {
             keys: ["api", "rest", "fetch", "axios", "http", "endpoint", "request"],
-            text: "Consumindo REST API com JavaScript nativo (Fetch API):",
-            code: `// GET com tratamento de erro
-async function getUsuarios() {
-    try {
-        const res = await fetch("https://api.exemplo.com/users", {
-            headers: { "Authorization": \`Bearer \${token}\` }
-        });
+            text: "API REST — forma de comunicar dois sistemas pela internet.\nExemplos básicos com fetch:",
+            code: `// GET — buscar dados
+fetch("https://api.exemplo.com/usuarios")
+    .then(res  => res.json())
+    .then(dados => console.log(dados))
+    .catch(erro => console.error("Erro:", erro));
 
-        if (!res.ok) throw new Error(\`HTTP \${res.status}\`);
-
-        const data = await res.json();
-        return data;
-
-    } catch (err) {
-        console.error("Falha na requisição:", err.message);
-        throw err;
-    }
-}
-
-// POST com body JSON
-await fetch("/api/usuarios", {
-    method: "POST",
+// POST — enviar dados
+fetch("https://api.exemplo.com/usuarios", {
+    method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome: "João", email: "j@email.com" })
-});`,
+    body:    JSON.stringify({ nome: "Ana", idade: 25 })
+})
+    .then(res  => res.json())
+    .then(novo => console.log("Criado:", novo));
+
+// Com async/await (mais legível)
+async function buscarUsuarios() {
+    const res   = await fetch("https://api.exemplo.com/usuarios");
+    const dados = await res.json();
+    console.log(dados);
+}`,
             lang: "javascript"
         },
         {
@@ -3379,7 +3438,7 @@ function renderizarUsuario(el) { /*...*/ }`,
 
 
     // ════════════════════════════════════════════════════════════
-    // SYNTAX HIGHLIGHTER — mini tokenizador sem biblioteca
+    // SYNTAX HIGHLIGHTER
     // Protege strings/comentários → aplica cores → restaura
     // ════════════════════════════════════════════════════════════
     function highlightCode(code, lang) {
@@ -3470,7 +3529,7 @@ function renderizarUsuario(el) { /*...*/ }`,
         return `<span class="${type === "str" ? "hl-str" : "hl-cmt"}">${text}</span>`;
     });
 
-    // 9. Funções (AGORA sim, depois de restaurar)
+    // 9. Funções
     s = s.replace(
         /\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()/g,
         '<span class="hl-fn">$1</span>'
@@ -3509,8 +3568,6 @@ function renderizarUsuario(el) { /*...*/ }`,
             });
         };
 
-        // innerHTML (não textContent) para renderizar as spans do highlight
-        // O conteúdo vem do array brain (fonte confiável), não do usuário
         const pre = document.createElement("pre");
         pre.innerHTML = highlightCode(code, lang);
 
@@ -3586,7 +3643,7 @@ function renderizarUsuario(el) { /*...*/ }`,
 
 
     // ════════════════════════════════════════════════════════════
-    // QUICK ASK — chips de tópico rápido
+    // QUICK ASK — botões de tópico rápido
     // ════════════════════════════════════════════════════════════
     function quickAsk(topic) {
         input.value = topic;
@@ -3612,7 +3669,7 @@ function renderizarUsuario(el) { /*...*/ }`,
     // ════════════════════════════════════════════════════════════
     function init() {
         addMsg(
-            "Olá, dev! Sou o ByteBot, seu assistente de programação.\nClique nos botões abaixo para tópicos rápidos, ou me pergunte sobre qualquer tecnologia!",
+            "Olá, dev! Sou o ByteBot, seu assistente de programação. Clique nos botões abaixo para tópicos rápidos, ou me pergunte sobre qualquer tecnologia!",
             "bot"
         );
     }
@@ -3626,6 +3683,111 @@ function renderizarUsuario(el) { /*...*/ }`,
 
     // Inicia
     init();
+
+    // ════════════════════════════════════════════════════════════
+    // MASCOTE INTERATIVO
+    // ════════════════════════════════════════════════════════════
+    const mascoteWrap = document.getElementById("mascote-wrap");
+    const bubble      = document.getElementById("thought-bubble");
+    const eyeLeft     = document.getElementById("eye-left");
+    const eyeRight    = document.getElementById("eye-right");
+    const eyeRefL     = document.getElementById("eye-ref-l");
+    const eyeRefR     = document.getElementById("eye-ref-r");
+    const headerEl    = document.getElementById("header");
+
+    const EYE_L_BASE = 11, EYE_R_BASE = 33;
+    const REF_L_BASE = 12, REF_R_BASE = 34;
+    const EYE_Y_BASE = 20;
+    const REF_Y_BASE = 13.5;
+    
+    const MAX_EYE_MOVE = 1.8; // SVG units
+
+    // Pensamentos periódicos
+    const thoughts = [
+    "undefined is not a function… de novo não 😩",
+    "Por que funciona??? Nem Deus sabe 🙏",
+    "npm install e reza 🙏",
+    "git commit -m 'agora vai' 🚀",
+    "Stack Overflow, nunca te critiquei 🤝",
+    "Isso aqui em prod vai dar ruim… mas vamo assim mesmo 😬",
+    "// TODO: eu do futuro que resolva 😎",
+    "while (!funciona) { mexeAleatorio(); }",
+    "Corrigi um bug, nasceram 3 👶👶👶",
+    "ctrl+c ctrl+v engenharia de software 💻",
+    "Na minha máquina tá perfeito 👍",
+    "Deploy de sexta? bora viver perigosamente 😈",
+    "console.log('vai aqui?') → não foi 🤡",
+    "Só mais um if... confia 😅",
+    "NullPointerException me perseguindo 👻",
+    "Café acabou… agora complicou ☕❌",
+    "Se tá funcionando, NÃO ENCOSTA ⚠️",
+    "return 42; // fé nos dev",
+    "Bug intermitente = meu maior inimigo 😡",
+    "Frontend culpa o backend, backend culpa o frontend 🤝",
+    "Funciona no localhost, quebra em produção 🎯",
+];
+
+    // Reações ao clique
+    const reactions = [
+    "E aí dev! Precisa de um help? 👨‍💻",
+    "Calma aí, tô no flow 😤",
+    "Evento capturado com sucesso 😎",
+    "Bip bop, bug detectado 🤖",
+    "Minha stack sentiu isso 📡",
+    "Sistema online e meio instável 🟢",
+    "Clique registrado, bora resolver 🧠",
+    "Para de clicar, tô sensível 😂",
+    "Me deixa debugar em paz 😅",
+    "Chamou? Tô quase entendendo o bug 🤡",
+];
+
+    let bubbleTimer;
+
+    function showBubble(text) {
+        clearTimeout(bubbleTimer);
+        bubble.classList.remove("show");
+
+        const rect = mascoteWrap.getBoundingClientRect();
+        const cx   = rect.left + rect.width / 2;
+        const top  = rect.top - 12;
+
+        bubble.textContent = text;
+        bubble.style.left  = cx + "px";
+        // posiciona acima do mascote (translateY(-100%) aplicado via transform)
+        bubble.style.top       = top + "px";
+        bubble.style.transform = "translateX(-50%) translateY(-100%)";
+
+        // força reflow para a transição funcionar após "classList.remove"
+        void bubble.offsetWidth;
+        bubble.classList.add("show");
+
+        bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 3800);
+    }
+
+    // Clique no mascote → pula + reação
+    mascoteWrap.addEventListener("click", () => {
+        mascoteWrap.classList.remove("bouncing");
+        void mascoteWrap.offsetWidth; // reflow para reiniciar animação
+        mascoteWrap.classList.add("bouncing");
+        mascoteWrap.addEventListener("animationend", () => {
+            mascoteWrap.classList.remove("bouncing");
+        }, { once: true });
+
+        const r = reactions[Math.floor(Math.random() * reactions.length)];
+        showBubble(r);
+    });
+
+    // Pensamentos automáticos (12 – 22 s)
+    function schedulePensamento() {
+        const delay = 12000 + Math.random() * 10000;
+        setTimeout(() => {
+            const t = thoughts[Math.floor(Math.random() * thoughts.length)];
+            showBubble(t);
+            schedulePensamento();
+        }, delay);
+    }
+    setTimeout(schedulePensamento, 8000); // primeiro após 8 s
+
 </script>
 
 </body>
