@@ -3700,7 +3700,7 @@ function renderizarUsuario(el) { /*...*/ }`,
     const eyeGroupLeft  = document.getElementById("eye-group-left");
     const eyeGroupRight = document.getElementById("eye-group-right");
 
-    const MAX_EYE_MOVE = 2; // SVG units (X e Y)
+    const MAX_EYE_MOVE = 4; // SVG units (X e Y)
 
     // Pensamentos periódicos
     const thoughts = [
@@ -3798,7 +3798,7 @@ function renderizarUsuario(el) { /*...*/ }`,
         const normY = Math.max(-1, Math.min(1, (e.clientY - svgCY) / (window.innerHeight * 0.5)));
 
         const dx = (normX * MAX_EYE_MOVE).toFixed(2);
-        const dy = (normY * MAX_EYE_MOVE).toFixed(2);
+        const dy = (normY * MAX_EYE_MOVE).toFixed(2);   
 
         eyeGroupLeft.setAttribute("transform",  `translate(${dx},${dy})`);
         eyeGroupRight.setAttribute("transform", `translate(${dx},${dy})`);
