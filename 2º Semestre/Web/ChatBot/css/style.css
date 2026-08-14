@@ -1,0 +1,686 @@
+:root {
+    --bg:        #0a0806;
+    --surface:   #161210;
+    --surface2:  #221c16;
+    --border:    #3d3020;
+
+    --primary:   #ff8c42;
+    --ember:     #ff5e1a;
+    --gold:      #e0a030;
+    --hot:       #ffcc44;
+
+    --text:      #f2e4cc;
+    --muted:     #a08060;
+
+    --user-bg:   #ff8c42;
+    --bot-bg:    #1e1810;
+    --code-bg:   #080604;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background:
+        radial-gradient(ellipse at 30% 80%, rgba(255,94,26,.18)  0%, transparent 50%),
+        radial-gradient(ellipse at 70% 90%, rgba(255,140,42,.12) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 50%, rgba(30,15,5,.9)     0%, transparent 80%),
+        var(--bg);
+
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Georgia', 'Segoe UI', serif;
+    padding: 16px env(safe-area-inset-right, 16px) calc(16px + env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 16px);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── EFEITOS DE FORJA (Fundo) ────────────────────────────── */
+.fire-glow {
+    position: fixed;
+    bottom: -15vh;
+    left: 0;
+    width: 100vw;
+    height: 60vh;
+    background:
+        radial-gradient(ellipse at 20% 100%, rgba(255,94,26,.25) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(255,140,42,.2) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 100%, rgba(255,60,0,.35) 0%, transparent 70%);
+    filter: blur(25px);
+    pointer-events: none;
+    z-index: 0;
+    animation: forge-pulse 4s infinite alternate ease-in-out;
+}
+
+@keyframes forge-pulse {
+    0%   { opacity: 0.7; transform: scaleY(1) scaleX(1); }
+    50%  { opacity: 1.0; transform: scaleY(1.1) scaleX(0.98); }
+    100% { opacity: 0.8; transform: scaleY(1.05) scaleX(1.02); }
+}
+
+.fire-particles {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    bottom: -20px;
+    border-radius: 50%;
+    background: #ffcc00;
+    box-shadow: 0 0 10px #ff6b00, 0 0 20px #ff3c00;
+    opacity: 0;
+    animation: spark-rise 5s infinite ease-in;
+}
+
+.particle:nth-child(1) { left: 10%; width: 5px; height: 5px; animation-duration: 4s; animation-delay: 0.2s; }
+.particle:nth-child(2) { left: 25%; width: 8px; height: 8px; background: #ffaa33; animation-duration: 5.5s; animation-delay: 1.5s; }
+.particle:nth-child(3) { left: 40%; width: 6px; height: 6px; animation-duration: 4.8s; animation-delay: 0.8s; }
+.particle:nth-child(4) { left: 55%; width: 9px; height: 9px; background: #ff6b00; animation-duration: 6.2s; animation-delay: 2.1s; }
+.particle:nth-child(5) { left: 70%; width: 4px; height: 4px; animation-duration: 3.5s; animation-delay: 0.5s; }
+.particle:nth-child(6) { left: 85%; width: 7px; height: 7px; background: #ffcc44; animation-duration: 5.2s; animation-delay: 1.2s; }
+.particle:nth-child(7) { left: 35%; width: 6px; height: 6px; animation-duration: 4.5s; animation-delay: 3.3s; }
+.particle:nth-child(8) { left: 75%; width: 8px; height: 8px; background: #ff9900; animation-duration: 5.8s; animation-delay: 2.8s; }
+
+@keyframes spark-rise {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 1; }
+    30%  { opacity: 0.9; }
+    60%  { transform: translateY(-60vh) translateX(40px) scale(0.8); opacity: 0.7; }
+    80%  { transform: translateY(-80vh) translateX(-20px) scale(0.5); opacity: 0.3; }
+    100% { transform: translateY(-110vh) translateX(15px) scale(0.1); opacity: 0; }
+}
+
+/* ── APP CONTAINER ────────────────────────────────────────── */
+#app {
+    width: 480px;
+    max-width: 100%;
+    height: min(740px, calc(100dvh - 32px - env(safe-area-inset-bottom, 0px)));
+    max-height: calc(100dvh - 32px - env(safe-area-inset-bottom, 0px)); /* Respeita o padding da página e a área segura */
+
+    /* metal escuro com gradiente de calor na base */
+    background:
+        linear-gradient(180deg,
+            #1a1410 0%,
+            #141008 60%,
+            #1f1208 100%);
+
+    border-radius: 18px;
+    border: 1px solid var(--border);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 0 0 1px rgba(255,94,26,.15),
+        0 10px 60px rgba(0,0,0,.9),
+        0 0 80px rgba(255,80,0,.12),
+        0 0 200px rgba(255,60,0,.06);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    z-index: 1; /* Mantém o app na frente do fogo */
+}
+
+/* brilho de brasa na borda inferior do app */
+#app::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ff6b1a 40%, #ffaa33 60%, transparent);
+    border-radius: 0 0 18px 18px;
+    opacity: .5;
+    animation: glow-line 3s ease-in-out infinite;
+}
+
+@keyframes glow-line {
+    0%,100% { opacity: .3; }
+    50%      { opacity: .8; }
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+#header {
+    background:
+        linear-gradient(180deg, #241c12, #181008);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+}
+
+/* linha de calor no topo do header */
+#header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        #ff6b1a 30%,
+        #ffcc44 50%,
+        #ff6b1a 70%,
+        transparent 100%);
+    opacity: .6;
+}
+
+.header-info { 
+    flex: 1; 
+    min-width: 0; /* Permite que o título possa encolher/cortar */
+}
+
+.header-info h1 {
+    font-size: 19px;
+    font-family: 'Georgia', serif;
+    letter-spacing: 2px;
+    color: var(--primary);
+    text-shadow:
+        0 0 8px  rgba(255,140,42,.6),
+        0 0 20px rgba(255,80,0,.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona os 3 pontinhos '...' se a tela for muito fina */
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+    animation: glow 2.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%,100% { opacity: 1;  box-shadow: 0 0 6px var(--gold); }
+    50%      { opacity: .4; box-shadow: 0 0 2px var(--gold); }
+}
+
+#clock {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+#clear-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .2s;
+}
+
+#clear-btn:hover {
+    border-color: var(--ember);
+    color: var(--ember);
+    box-shadow: 0 0 8px rgba(255,94,26,.3);
+}
+
+/* ── CHAT WINDOW ──────────────────────────────────────────── */
+#chat-window {
+    flex: 1;
+    min-height: 0; /* Permite scroll correto em layout Flexbox */
+    padding: 16px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    /* textura de metal escuro */
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 24px,
+            rgba(255,140,42,.015) 24px,
+            rgba(255,140,42,.015) 25px
+        ),
+        linear-gradient(180deg, #0e0a06 0%, #120c08 100%);
+}
+
+.msg-wrap {
+    max-width: 76%;
+    min-width: 0;
+}
+
+.user { align-self: flex-end; }
+.bot  { align-self: flex-start; }
+
+.msg {
+    box-sizing: border-box;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* mensagem do usuário — metal quente */
+.user .msg {
+    background: linear-gradient(145deg, #ff8c42, #cc5a18);
+    color: #1a0e06;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(255,100,26,.3);
+}
+
+/* mensagem do bot — aço escuro */
+.bot .msg {
+    background: linear-gradient(145deg, #1e1810, #160e08);
+    border: 1px solid #3d3020;
+    color: var(--text);
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        0 2px 8px rgba(0,0,0,.5);
+}
+
+.msg h1,
+.msg h2,
+.msg h3,
+.msg h4,
+.msg h5,
+.msg h6 {
+    margin: 0 0 0.6em;
+    padding: 0;
+    line-height: 1.35;
+    font-weight: 700;
+}
+
+.msg h1 {
+    font-size: 1.15rem;
+}
+
+.msg h2 {
+    font-size: 1.08rem;
+}
+
+.msg h3 {
+    font-size: 1rem;
+}
+
+.msg h4,
+.msg h5,
+.msg h6 {
+    font-size: 0.95rem;
+}
+
+.msg p {
+    margin: 0 0 0.8em;
+}
+
+.msg ul,
+.msg ol {
+    margin: 0.4em 0 0.8em 1.1em;
+    padding-left: 1.1em;
+}
+
+.msg li {
+    margin: 0.22em 0;
+}
+
+.msg-time {
+    font-size: 10px;
+    color: var(--primary); /* <-- ALTERE A COR AQUI (ex: #ffffff, #ffcc44 ou var(--text)) */
+    margin-top: 4px;
+    opacity: .7;
+}
+
+.user .msg-time { text-align: right; }
+
+/* ── CODE BLOCKS ──────────────────────────────────────────── */
+.code-block {
+    box-sizing: border-box;
+    background: var(--code-bg);
+    border: 1px solid #4a3018;
+    border-radius: 10px;
+    overflow: visible; /* permite expandir verticalmente com o conteúdo do pre */
+    margin-top: 8px;
+    max-width: 100%;
+    min-width: 0; /* Correção CRÍTICA: obriga o Flexbox a criar barra de rolagem */
+    width: 100%;
+}
+
+.code-header {
+    background: #1e1408;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #3a2810;
+}
+
+.code-lang {
+    color: var(--gold);
+    font-size: 12px;
+    font-family: monospace;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.copy-btn {
+    background: none;
+    border: 1px solid #3a2810;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    transition: all .2s;
+}
+
+.copy-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.code-block pre {
+    padding: 14px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    overflow-y: visible;
+    white-space: pre-wrap;
+    word-break: break-word;
+    hyphens: auto;
+    width: 100%;
+    color: #d4b896;
+    line-height: 1.5;
+}
+
+/* ── SYNTAX HIGHLIGHT ─────────────────────────────────────── */
+.hl-kw   { color: #ff7b72; }
+.hl-str  { color: #ffd580; }
+.hl-num  { color: #f2cc60; }
+.hl-fn   { color: #ffb86c; }
+.hl-cmt  { color: #6a5840; font-style: italic; }
+.hl-prop { color: #e0a030; }
+.hl-tag  { color: #ff8c42; }
+.hl-attr { color: #ffd580; }
+
+/* ── ATALHOS ────────────────────────────────────────────────── */
+#atalhos {
+    padding: 8px 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: #0e0a06;
+    border-top: 1px solid #2a1e10;
+}
+
+.atalho {
+    background: #1e1810;
+    border: 1px solid #3d3020;
+    color: var(--muted);
+    padding: 4px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all .2s;
+}
+
+.atalho:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: 0 0 8px rgba(255,140,42,.3);
+    background: #261c10;
+}
+
+/* ── INPUT AREA ───────────────────────────────────────────── */
+#input-area {
+    padding: 12px calc(12px + env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
+    display: flex;
+    gap: 8px;
+    background: #0e0a06;
+    border-top: 1px solid var(--border);
+}
+
+#user-input {
+    flex: 1;
+    background: #1a1410;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 16px; /* Evita zoom automático no iOS */
+    font-family: inherit;
+    transition: border-color .2s, box-shadow .2s;
+    text-overflow: ellipsis;
+}
+
+#user-input::placeholder {
+    color: #5a4830;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 12px rgba(255,140,42,.2);
+}
+
+#send-btn {
+    background: linear-gradient(145deg, #ff8c42, #cc5500);
+    border: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+    box-shadow:
+        0 0 14px rgba(255,94,26,.5),
+        inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+#send-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 24px rgba(255,94,26,.7);
+}
+
+#send-btn:active {
+    transform: scale(.96);
+}
+
+/* ── MASCOTE ──────────────────────────────────────────────── */
+#mascote-wrap {
+    cursor: pointer;
+    transition: filter .3s;
+    flex-shrink: 0;
+    width: 120px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+#mascote-wrap svg {
+    overflow: visible;
+    width: 120px;
+    height: 140px;
+}
+
+#mascote-wrap:hover svg {
+    filter: drop-shadow(0 0 12px rgba(255,140,42,.8));
+}
+
+/* Animação do braço batendo na forja */
+@keyframes hammer-strike {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(15deg); }    /* Levanta pra pegar impulso */
+    22% { transform: rotate(-130deg); }  /* Bate no metal */
+    26% { transform: rotate(-110deg); }  /* Quique do martelo */
+    32% { transform: rotate(-130deg); }  /* Encosta de novo */
+    60% { transform: rotate(-130deg); }  /* Segura firmando a peça */
+    80% { transform: rotate(0deg); }     /* Volta a posição inicial */
+}
+
+#hammer-arm {
+    transform-origin: 64px 54px; /* Centro da articulação do ombro do robô */
+    animation: hammer-strike 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Metal brilhando a cada batida */
+@keyframes metal-glow {
+    0%, 20%   { fill: #ff6b1a; }
+    22%, 26%  { fill: #ffffff; }
+    50%, 100% { fill: #ff6b1a; }
+}
+.hot-metal {
+    animation: metal-glow 2.5s infinite;
+}
+
+/* Códigos voando do impacto na bigorna */
+@keyframes spark-strike {
+    0%, 21%   { opacity: 0; transform: translate(0, 0) scale(0) rotate(0deg); }
+    22%       { opacity: 1; transform: translate(0, 0) scale(1.2) rotate(0deg); }
+    40%, 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.8) rotate(var(--rot)); }
+}
+
+.spark {
+    transform-origin: 34px 72px; /* Ponto de origem do impacto */
+    animation: spark-strike 2.5s infinite ease-out;
+}
+.spark.s1 { --tx: -24px; --ty: -18px; --rot: -45deg; }
+.spark.s2 { --tx: 22px;  --ty: -25px; --rot: 60deg; }
+.spark.s3 { --tx: -10px; --ty: -35px; --rot: 120deg; }
+.spark.s4 { --tx: 28px;  --ty: -12px; --rot: 90deg; }
+
+/* bounce ao clicar no mascote */
+@keyframes bounce-bot {
+    0%,100% { transform: translateY(0); }
+    30%      { transform: translateY(-10px); }
+    60%      { transform: translateY(-4px); }
+}
+
+.bouncing { animation: bounce-bot .45s ease; }
+
+/* ── THOUGHT BUBBLE ───────────────────────────────────────── */
+#thought-bubble {
+    position: fixed;
+    background: #221c10;
+    border: 1px solid #5c4020;
+    border-radius: 12px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text);
+    max-width: 220px;
+    width: max-content;
+    line-height: 1.4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,.6), 0 0 16px rgba(255,140,42,.15);
+}
+
+#thought-bubble.show { opacity: 1; }
+
+/* triângulo apontando para baixo (em direção ao título) */
+#thought-bubble::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: var(--pointer-left, 16px);
+    transform: translateX(-50%);
+    border-style: solid;
+    border-width: 8px 8px 0 8px;
+    border-color: #5c4020 transparent transparent transparent;
+}
+
+/* ── TYPING INDICATOR ─────────────────────────────────────── */
+.typing-indicator {
+    display: flex;
+    gap: 5px;
+    padding: 14px 16px;
+    align-items: center;
+}
+
+.typing-indicator span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: typing-dot .9s ease-in-out infinite;
+    opacity: .4;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: .2s; }
+.typing-indicator span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes typing-dot {
+    0%,80%,100% { opacity: .2; transform: scale(.8); }
+    40%          { opacity: 1;  transform: scale(1.2); box-shadow: 0 0 6px var(--ember); }
+}
+
+/* ── OLHOS DO MASCOTE — piscar ────────────────────────────── */
+@keyframes blink {
+    0%, 92%, 100% { transform: scaleY(1); }
+    96%           { transform: scaleY(0.8); }
+}
+
+.eye       { animation: blink 4s ease-in-out infinite; transform-origin: center; }
+.eye.delay { animation-delay: .3s; }
+
+/* ── SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3d2e18; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #5c4820; }
+
+/* ── RESPONSIVIDADE MOBILE ────────────────────────────────── */
+@media (max-width: 480px) {
+    /* Botão Limpar flutuante sobre a entrada, mais acessível no celular */
+    #clear-btn {
+        position: absolute;
+        bottom: 84px; /* Fica acima da barra de atalhos e input */
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        font-size: 0; /* Esconde a palavra "Limpar" */
+        border-radius: 50%;
+        background: #1a1410;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+        border: 1px solid var(--border);
+        color: var(--text);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #clear-btn::before {
+        content: '\232B';
+        font-size: 20px;
+        color: inherit;
+    }
+    #clock {
+        display: none; /* Esconde o relógio no celular para o título respirar */
+    }
+}
