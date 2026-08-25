@@ -1,0 +1,524 @@
+/* ============================================================
+ 1. CRIAÇÃO DO BANCO DE DADOS
+ ============================================================ */
+DROP DATABASE IF EXISTS db_clientes;
+CREATE DATABASE db_clientes
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_0900_ai_ci;
+USE db_clientes;
+/* ============================================================
+ 2. TABELA DE CATEGORIAS
+ ============================================================ */
+CREATE TABLE categorias_cliente (
+ id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+ nome VARCHAR(50) NOT NULL UNIQUE,
+ descricao VARCHAR(255),
+ ativo BOOLEAN NOT NULL DEFAULT TRUE,
+ criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+/* ============================================================
+ 3. TABELA PRINCIPAL DE CLIENTES
+ ============================================================ */
+CREATE TABLE clientes (
+ id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+ nome VARCHAR(100) NOT NULL,
+ cpf VARCHAR(14) NOT NULL UNIQUE,
+ data_nascimento DATE,
+ sexo ENUM('M', 'F', 'O', 'N') DEFAULT 'N',
+ email_principal VARCHAR(150) NOT NULL UNIQUE,
+ categoria_id INT,
+ status ENUM(
+ 'ATIVO',
+ 'INATIVO',
+ 'BLOQUEADO'
+ ) NOT NULL DEFAULT 'ATIVO',
+ observacoes TEXT,
+ criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ atualizado_em TIMESTAMP
+ DEFAULT CURRENT_TIMESTAMP
+ ON UPDATE CURRENT_TIMESTAMP,
+ CONSTRAINT fk_cliente_categoria
+ FOREIGN KEY (categoria_id)
+ REFERENCES categorias_cliente(id_categoria)
+ ON DELETE SET NULL
+ ON UPDATE CASCADE
+);
+/* ============================================================
+ 4. TABELA DE ENDEREÇOS
+ ============================================================ */
+CREATE TABLE enderecos (
+ id_endereco INT AUTO_INCREMENT PRIMARY KEY,
+ cliente_id INT NOT NULL,
+ tipo_endereco ENUM(
+ 'RESIDENCIAL',
+ 'COMERCIAL',
+ 'OUTRO'
+ ) NOT NULL DEFAULT 'RESIDENCIAL',
+ cep VARCHAR(9) NOT NULL,
+ logradouro VARCHAR(150) NOT NULL,
+ numero VARCHAR(20) NOT NULL,
+ complemento VARCHAR(100),
+ bairro VARCHAR(100) NOT NULL,
+ cidade VARCHAR(100) NOT NULL,
+ estado CHAR(2) NOT NULL,
+ pais VARCHAR(50) NOT NULL DEFAULT 'Brasil',
+ principal BOOLEAN NOT NULL DEFAULT FALSE,
+ criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_endereco_cliente
+ FOREIGN KEY (cliente_id)
+ REFERENCES clientes(id_cliente)
+ ON DELETE CASCADE
+ ON UPDATE CASCADE
+);
+/* ============================================================
+ 5. TABELA DE TELEFONES
+ ============================================================ */
+CREATE TABLE telefones (
+ id_telefone INT AUTO_INCREMENT PRIMARY KEY,
+ cliente_id INT NOT NULL,
+ tipo ENUM(
+ 'CELULAR',
+ 'RESIDENCIAL',
+ 'COMERCIAL',
+ 'WHATSAPP'
+ ) NOT NULL DEFAULT 'CELULAR',
+ numero VARCHAR(20) NOT NULL,
+ principal BOOLEAN NOT NULL DEFAULT FALSE,
+ criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_telefone_cliente
+ FOREIGN KEY (cliente_id)
+ REFERENCES clientes(id_cliente)
+ ON DELETE CASCADE
+ ON UPDATE CASCADE
+);
+/* ============================================================
+ 6. TABELA DE E-MAILS
+ ============================================================ */
+CREATE TABLE emails_cliente (
+ id_email INT AUTO_INCREMENT PRIMARY KEY,
+ cliente_id INT NOT NULL,
+ email VARCHAR(150) NOT NULL,
+ tipo ENUM(
+ 'PESSOAL',
+ 'COMERCIAL',
+ 'OUTRO'
+ ) NOT NULL DEFAULT 'PESSOAL',
+ principal BOOLEAN NOT NULL DEFAULT FALSE,
+ criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_email_cliente
+ FOREIGN KEY (cliente_id)
+ REFERENCES clientes(id_cliente)
+ ON DELETE CASCADE
+ ON UPDATE CASCADE
+);
+/* ============================================================
+ 7. ÍNDICES
+ ============================================================ */
+CREATE INDEX idx_cliente_nome
+ON clientes(nome);
+CREATE INDEX idx_cliente_cpf
+ON clientes(cpf);
+CREATE INDEX idx_cliente_status
+ON clientes(status);
+CREATE INDEX idx_cliente_categoria
+ON clientes(categoria_id);
+CREATE INDEX idx_endereco_cidade
+ON enderecos(cidade);
+CREATE INDEX idx_endereco_cep
+ON enderecos(cep);
+CREATE INDEX idx_telefone_numero
+ON telefones(numero);
+CREATE INDEX idx_email
+ON emails_cliente(email);
+/* ============================================================
+ 8. INSERÇÃO DE CATEGORIAS
+ ============================================================ */
+INSERT INTO categorias_cliente
+(nome, descricao)
+VALUES
+('VIP', 'Clientes estratégicos ou de alto valor'),
+('EMPRESARIAL', 'Clientes pessoa jurídica'),
+('NORMAL', 'Clientes padrão'),
+('NOVO', 'Clientes recém cadastrados');
+/* ============================================================
+ 9. INSERÇÃO DE CLIENTES
+ ============================================================ */
+INSERT INTO clientes
+(
+ nome,
+ cpf,
+ data_nascimento,
+ sexo,
+ email_principal,
+ categoria_id,
+ status,
+ observacoes
+)
+VALUES
+(
+ 'João da Silva',
+ '123.456.789-00',
+ '1985-05-10',
+ 'M',
+ 'joao@email.com',
+ 3,
+ 'ATIVO',
+ 'Cliente cadastrado pelo sistema.'
+),
+(
+ 'Maria Oliveira',
+ '987.654.321-00',
+ '1990-08-20',
+ 'F',
+ 'maria@email.com',
+ 1,
+ 'ATIVO',
+ 'Cliente VIP.'
+),
+(
+ 'Carlos Santos',
+ '456.789.123-00',
+ '1978-03-15',
+ 'M',
+ 'carlos@email.com',
+ 2,
+ 'ATIVO',
+ 'Cliente empresarial.'
+);
+/* ============================================================
+ 10. INSERÇÃO DE ENDEREÇOS
+ ============================================================ */
+INSERT INTO enderecos
+(
+ cliente_id,
+ tipo_endereco,
+ cep,
+ logradouro,
+ numero,
+ complemento,
+ bairro,
+ cidade,
+ estado,
+ principal
+)
+VALUES
+(
+ 1,
+ 'RESIDENCIAL',
+ '13480-000',
+ 'Rua das Flores',
+ '100',
+ 'Casa',
+ 'Centro',
+ 'Limeira',
+ 'SP',
+ TRUE
+),
+(
+ 2,
+ 'RESIDENCIAL',
+ '13481-000',
+ 'Avenida Brasil',
+ '500',
+ 'Apartamento 20',
+ 'Centro',
+ 'Limeira',
+ 'SP',
+ TRUE
+),
+(
+ 3,
+ 'COMERCIAL',
+ '12210-000',
+ 'Avenida Central',
+ '1500',
+ 'Sala 10',
+ 'Centro',
+ 'São José dos Campos',
+ 'SP',
+ TRUE
+);
+/* ============================================================
+ 11. INSERÇÃO DE TELEFONES
+ ============================================================ */
+INSERT INTO telefones
+(
+ cliente_id,
+ tipo,
+ numero,
+ principal
+)
+VALUES
+(1, 'CELULAR', '19999999999', TRUE),
+(1, 'WHATSAPP', '19988888888', FALSE),
+(2, 'CELULAR', '19977777777', TRUE),
+(3, 'COMERCIAL', '1233334444', TRUE);
+/* ============================================================
+ 12. INSERÇÃO DE E-MAILS
+ ============================================================ */
+INSERT INTO emails_cliente
+(
+ cliente_id,
+ email,
+ tipo,
+ principal
+)
+VALUES
+(1, 'joao@gmail.com', 'PESSOAL', TRUE),
+(1, 'joao@empresa.com', 'COMERCIAL', FALSE),
+(2, 'maria@gmail.com', 'PESSOAL', TRUE),
+(3, 'carlos@empresa.com', 'COMERCIAL', TRUE);
+/* ============================================================
+ 13. CONSULTAR TODOS OS CLIENTES
+ ============================================================ */
+SELECT *
+FROM clientes;
+/* ============================================================
+ 14. CONSULTAR CLIENTES ATIVOS
+ ============================================================ */
+SELECT
+ id_cliente,
+ nome,
+ cpf,
+ email_principal,
+ status
+FROM clientes
+WHERE status = 'ATIVO';
+/* ============================================================
+ 15. CONSULTAR CLIENTES POR CIDADE
+ ============================================================ */
+SELECT
+ c.nome,
+ e.cidade,
+ e.estado
+FROM clientes c
+INNER JOIN enderecos e
+ ON c.id_cliente = e.cliente_id
+WHERE e.cidade = 'Limeira';
+/* ============================================================
+ 16. CONSULTA COMPLETA DO CLIENTE
+ ============================================================ */
+SELECT
+ c.id_cliente,
+ c.nome,
+ c.cpf,
+ c.data_nascimento,
+ c.email_principal,
+ c.status,
+ cat.nome AS categoria,
+ e.cep,
+ e.logradouro,
+ e.numero,
+ e.bairro,
+ e.cidade,
+ e.estado
+FROM clientes c
+LEFT JOIN categorias_cliente cat
+ ON c.categoria_id = cat.id_categoria
+LEFT JOIN enderecos e
+ ON c.id_cliente = e.cliente_id
+ORDER BY c.nome;
+/* ============================================================
+ 17. VIEW - CONSULTA CONSOLIDADA
+ ============================================================ */
+CREATE VIEW vw_clientes_completo AS
+SELECT
+ c.id_cliente,
+ c.nome,
+ c.cpf,
+ c.data_nascimento,
+ c.sexo,
+ c.email_principal,
+ c.status,
+ cat.nome AS categoria,
+ e.cep,
+ e.logradouro,
+ e.numero,
+ e.complemento,
+ e.bairro,
+ e.cidade,
+ e.estado,
+ c.criado_em,
+ c.atualizado_em
+FROM clientes c
+LEFT JOIN categorias_cliente cat
+ ON c.categoria_id = cat.id_categoria
+LEFT JOIN enderecos e
+ ON c.id_cliente = e.cliente_id
+ AND e.principal = TRUE;
+/* ============================================================
+ 18. CONSULTAR A VIEW
+ ============================================================ */
+SELECT *
+FROM vw_clientes_completo;
+/* ============================================================
+ 19. PESQUISA POR NOME
+ ============================================================ */
+SELECT
+ id_cliente,
+ nome,
+ cpf,
+ email_principal
+FROM clientes
+WHERE nome LIKE '%Maria%';
+/* ============================================================
+ 20. PESQUISA POR CPF
+ ============================================================ */
+SELECT *
+FROM clientes
+WHERE cpf = '123.456.789-00';
+/* ============================================================
+ 21. ATUALIZAR CLIENTE
+ ============================================================ */
+UPDATE clientes
+SET
+ email_principal = 'joao.novo@email.com',
+ observacoes = 'E-mail atualizado pelo sistema.'
+WHERE id_cliente = 1;
+/* ============================================================
+ 22. ALTERAR STATUS
+ ============================================================ */
+UPDATE clientes
+SET status = 'INATIVO'
+WHERE id_cliente = 3;
+/* ============================================================
+ 23. EXCLUIR CLIENTE
+ ============================================================ */
+-- Atenção:
+-- A exclusão também removerá seus endereços,
+-- telefones e e-mails devido ao ON DELETE CASCADE.
+DELETE FROM clientes
+WHERE id_cliente = 3;
+/* ============================================================
+ 24. PROCEDURE PARA CADASTRAR CLIENTE
+ ============================================================ */
+DELIMITER $$
+CREATE PROCEDURE sp_cadastrar_cliente(
+ IN p_nome VARCHAR(100),
+ IN p_cpf VARCHAR(14),
+ IN p_data_nascimento DATE,
+ IN p_sexo CHAR(1),
+ IN p_email VARCHAR(150),
+ IN p_categoria INT
+)
+BEGIN
+ INSERT INTO clientes
+ (
+ nome,
+ cpf,
+ data_nascimento,
+ sexo,
+ email_principal,
+ categoria_id
+ )
+ VALUES
+ (
+ p_nome,
+ p_cpf,
+ p_data_nascimento,
+ p_sexo,
+ p_email,
+ p_categoria
+ );
+END$$
+DELIMITER ;
+/* ============================================================
+ 25. EXECUTAR PROCEDURE
+ ============================================================ */
+CALL sp_cadastrar_cliente(
+ 'Ana Pereira',
+ '111.222.333-44',
+ '1992-10-12',
+ 'F',
+ 'ana@email.com',
+ 4
+);
+/* ============================================================
+ 26. PROCEDURE PARA ALTERAR STATUS
+ ============================================================ */
+DELIMITER $$
+CREATE PROCEDURE sp_alterar_status_cliente(
+ IN p_id_cliente INT,
+ IN p_status VARCHAR(20)
+)
+BEGIN
+ UPDATE clientes
+ SET status = p_status
+ WHERE id_cliente = p_id_cliente;
+END$$
+DELIMITER ;
+/* ============================================================
+ 27. EXECUTAR PROCEDURE
+ ============================================================ */
+CALL sp_alterar_status_cliente(
+ 1,
+ 'ATIVO'
+);
+/* ============================================================
+ 28. RELATÓRIO DE CLIENTES POR CATEGORIA
+ ============================================================ */
+SELECT
+ cat.nome AS categoria,
+ COUNT(c.id_cliente) AS quantidade_clientes
+FROM categorias_cliente cat
+LEFT JOIN clientes c
+ ON cat.id_categoria = c.categoria_id
+GROUP BY
+ cat.id_categoria,
+ cat.nome
+ORDER BY
+ quantidade_clientes DESC;
+/* ============================================================
+ 29. QUANTIDADE TOTAL DE CLIENTES
+ ============================================================ */
+SELECT
+ COUNT(*) AS total_clientes
+FROM clientes;
+/* ============================================================
+ 30. QUANTIDADE DE CLIENTES POR STATUS
+ ============================================================ */
+SELECT
+ status,
+ COUNT(*) AS quantidade
+FROM clientes
+GROUP BY status;
+/* ============================================================
+ 31. CONSULTAR TELEFONES DE UM CLIENTE
+ ============================================================ */
+SELECT
+ c.nome,
+ t.tipo,
+ t.numero,
+ t.principal
+FROM clientes c
+INNER JOIN telefones t
+ ON c.id_cliente = t.cliente_id
+WHERE c.id_cliente = 1;
+/* ============================================================
+ 32. CONSULTAR E-MAILS DE UM CLIENTE
+ ============================================================ */
+SELECT
+ c.nome,
+ e.email,
+ e.tipo,
+ e.principal
+FROM clientes c
+INNER JOIN emails_cliente e
+ ON c.id_cliente = e.cliente_id
+WHERE c.id_cliente = 1;
+/* ============================================================
+ 33. CONSULTAR CLIENTES CADASTRADOS RECENTEMENTE
+ ============================================================ */
+SELECT
+ id_cliente,
+ nome,
+ email_principal,
+ criado_em
+FROM clientes
+ORDER BY criado_em DESC;
+/* ============================================================
+ 34. TESTE FINAL
+ ============================================================ */
+SELECT *
+FROM vw_clientes_completo
+ORDER BY nome;
